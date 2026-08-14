@@ -544,7 +544,7 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
       </div>
       <div class="panel">
         <div class="eyebrow"><span data-ic="trending-up"></span>ROADMAP</div>
-        <div class="ptitle">今後より詰めていきたいところ</div>
+        <div class="ptitle">今後詰めていきたいところ</div>
         <div id="roadmap"></div>
       </div>
     </div>
@@ -1399,7 +1399,8 @@ function renderJudge(){
 
   const road=[["01","会場図面PDF→初期モデル自動生成（会場図面読み込み）","【AIである必然性】を1→5点に動かす一手。デモの中心へ。",true],
     ["02","運用計画書のPDF出力","「手元に残る」まで通す。ビジネス成立性と完成度に同時に効く。",true],
-    ["03","LLMコストの実測表","呼出回数・原価・粗利率の3数字。半日で配点5点ぶん。",true]];
+    ["03","LLMコストの実測表","呼出回数・原価・粗利率の3数字。半日で配点5点ぶん。",true],
+    ["04","運営スタッフの最適配置の提案","混雑ピーク・暑熱リスク・ゲート流量から、時間帯別のゲート／救護／誘導スタッフ配置を提案する。",true]];
   $("#roadmap").innerHTML=road.map(r=>'<div class="step"><div class="ic" style="color:'+(r[3]?"var(--sky)":"var(--t3)")+'"><span style="font-family:var(--mono);font-size:11px;font-weight:600">'+r[0]+'</span></div><div><h5>'+r[1]+'</h5><p>'+r[2]+'</p></div></div>').join("");
 }
 
