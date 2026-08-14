@@ -573,7 +573,7 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 
 <footer class="site">
   <div class="wrap">
-    <span>CROWD WEATHER v5 ── 都知事杯オープンデータ・ハッカソン2026発 / AIハッカソン応募版</span>
+    <span>CROWD WEATHER v5</span>
     <span class="sp">NOAA SOLAR × SHADOW PROJECTION × WBGT × FRUIN</span>
   </div>
 </footer>
@@ -1381,7 +1381,12 @@ function renderJudge(){
 
   const open=[["人流統計","東京データプラットフォーム","混雑"],["道路ネットワーク・幅員","東京都オープンデータ","混雑"],["駅別乗降者数","東京都・各鉄道","混雑"],["3D都市モデル(建物形状)","PLATEAU","暑熱"],["暑さ指数・気象データ","環境省・気象庁","暑熱"],["イベント情報・クールスポット","東京都オープンデータ","両方"]];
   const priv=[["チケット販売数","主催者 ── 来場規模の最重要変数","混雑"],["入退場ゲートログ・場内売上","主催者","混雑"],["Wi-Fi/ビーコン滞留実測","自社センシング","混雑"],["カメラ人流センシング","自社センシング","両方"],["来場者アプリ利用ログ","CROWD WEATHER ── 精度を上げる実測","両方"]];
-  const dc=(d,lock)=>'<div class="dcard"><div class="nm">'+(lock?ic("lock",11)+" ":"")+d[0]+'</div><div class="src">'+d[1]+'</div><span class="badge '+(d[2]==="混雑"?"b-sky":d[2]==="暑熱"?"b-heat":"b-dim")+'">→ '+d[2]+'予測</span></div>';
+  const dc=(d,lock)=>{
+    const liveNote=d[0]==="暑さ指数・気象データ"
+      ?'<div class="src" style="color:var(--ok);font-weight:700">反映済 Open-Meteoを利用</div>'
+      :"";
+    return '<div class="dcard"><div class="nm">'+(lock?ic("lock",11)+" ":"")+d[0]+'</div>'+liveNote+'<div class="src">'+d[1]+'</div><span class="badge '+(d[2]==="混雑"?"b-sky":d[2]==="暑熱"?"b-heat":"b-dim")+'">→ '+d[2]+'予測</span></div>';
+  };
   $("#dataOpen").innerHTML='<div class="eyebrow" style="margin-bottom:6px">'+ic("database",11)+'OPEN ── 誰でも使える土台</div>'+open.map(d=>dc(d,false)).join("");
   $("#dataPriv").innerHTML='<div class="eyebrow" style="margin-bottom:6px">'+ic("lock",11)+'PRIVATE ── 私たちだけの差</div>'+priv.map(d=>dc(d,true)).join("");
 
@@ -1614,7 +1619,7 @@ async function generateDoc(kind){
   body.innerHTML='<div><div class="spin"></div>予報値から生成しています…</div>';
   let text=null, viaAI=false;
   try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{
+    const r=await fetch("/api/generate",{
       method:"POST", headers:{"Content-Type":"application/json"},
       signal:AbortSignal.timeout(20000),
       body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,
