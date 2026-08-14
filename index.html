@@ -418,6 +418,7 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
         <div class="ctl"><div class="row"><label><span data-ic="wind"></span>風速</label><output id="windOut"></output></div><input type="range" id="windRange" min="0" max="8" step="0.5"></div>
         <div class="ctl"><div class="row"><label><span data-ic="ticket"></span>チケット販売数</label><output id="tktOut"></output></div><input type="range" id="tktRange" min="3000" max="30000" step="500"></div>
         <label class="switch" style="margin:14px 0 4px"><input type="checkbox" id="guideChk" checked><span class="tr"></span><span>容量考慮の日陰誘導（Fruin 2.0人/m²上限）</span></label>
+        <div class="note" style="margin-top:12px">現在は、予報値から計画書・現場指示・来場者通知をAI生成。今後は許可取得後、過去の人流データや実会場のセンシングデータも取り込み、配置提案や事前シミュレーションまでAI活用を拡張します。</div>
         <div class="note" style="margin-top:12px" id="guideNote"></div>
       </div>
     </div>
@@ -1346,11 +1347,11 @@ function renderVisitor(){
 "use strict";
 /* ---------- 審査向け ---------- */
 const CRITERIA=[
-  {t:"課題の実在性",ic:"alert-triangle",p:"雑踏事故と熱中症搬送は毎夏の実課題。警備会社・主催者ヒアリングを応募前に実施し、実名コメントを添付予定。"},
+  {t:"課題の実在性",ic:"alert-triangle",p:"雑踏事故と熱中症搬送は毎夏の実課題。現状の取引先であるイベント会社にもヒアリングを実施済。"},
   {t:"ビジネス成立性",ic:"trending-up",p:"主催者向けB2B SaaS（計画+当日運用）＋自治体・鉄道連携。来場者アプリは無料で、利用ログが予報精度を上げる還流構造。"},
   {t:"完成度・デモ説得力",ic:"eye",p:"制作→現場→来場者を同一エンジンで一気通貫。数値はすべて実計算で、スライダー操作に全ビューが即応。"},
-  {t:"AIである必然性",ic:"cpu",p:"「指示を出力」が中核デモ：予報値から計画書・現場指示・アナウンス文を生成。次段は会場図面PDF→初期モデル自動生成。"},
-  {t:"技術的な作り込み",ic:"layers",p:"NOAA太陽位置×影投影×Stull湿球/黒球WBGT×Fruin密度。誘導は容量制約つき再配分問題として実装。"},
+  {t:"AIである必然性",ic:"cpu",p:"「指示を出力」が中核デモ：予報値から計画書・現場指示・アナウンス文を生成。今後は、許可が取れ次第、過去の人流データ・会場図の実データを学習想定。"},
+  {t:"技術的な作り込み",ic:"layers",p:"NOAA太陽位置×影投影×Stull湿球/黒球WBGT×Fruin密度。日陰への人流移動も視野に、各関係者へリアルタイムでデータ反映される見やすいシステムに工夫。"},
   {t:"LLMコスト",ic:"gauge",p:"OrcaRouterで難易度グレーディング→振り分け。コスト主因の来場者チャットを軽量モデルへ逃がし約8割削減（下表・実測予定）。"},
   {t:"セキュリティ",ic:"lock",p:"個人を特定しない統計量のみ扱う設計。APIキーはサーバ側、フロントは予報値のみ。脅威モデル1枚を添付予定。"},
   {t:"次世代性・独創性",ic:"sparkles",p:"機能ではなく時間軸を変えた——「現在の可視化」から「予報」へ。混雑天気記号という新しい共通言語を提案。"}
