@@ -524,7 +524,7 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
         <div class="ptitle">タスク別ルーティングとコスト<small>チケット数スライダーに連動</small></div>
         <div style="overflow-x:auto"><table class="rtable" id="routeTable"></table></div>
         <div class="costbars" id="costBars"></div>
-        <div class="note mono" style="margin-top:12px">統合は base_url の差し替え1行。文書生成の「指示を出力」ボタンが実デモ（API不通時はルールベース生成に自動フォールバック）。</div>
+        <div class="note mono" style="margin-top:12px">統合はサーバー側API経由でOrcaRouterに接続。APIキーはフロントに出さず安全に管理。文書生成の「指示を出力」ボタンが実デモ（API不通時はルールベース生成に自動フォールバック）。</div>
       </div>
       <div class="panel">
         <div class="eyebrow"><span data-ic="database"></span>DATA DESIGN</div>
@@ -1621,7 +1621,7 @@ async function generateDoc(kind){
   try{
     const r=await fetch("/api/generate",{
       method:"POST", headers:{"Content-Type":"application/json"},
-      signal:AbortSignal.timeout(20000),
+      signal:AbortSignal.timeout(60000),
       body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,
         messages:[{role:"user",content:
           "あなたはイベント安全管理の専門家。以下のJSON（混雑・暑熱予報の実計算値）だけを根拠に、日本語で「"+def.ask+"」を作成。"
