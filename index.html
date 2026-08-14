@@ -686,11 +686,11 @@ const ZONES=[
   {id:"prom", n:"中央プロムナード", x:88, y:24, w:30,h:110,roof:0,   base:.09, evening:.08},
 ];
 const BUILDINGS=[
-  {n:"メインステージ構造体", x:150,y:2, w:60,h:16, hgt:16},
-  {n:"サブステージ",         x:28, y:4, w:36,h:12, hgt:10},
-  {n:"展示ホールA",          x:2,  y:58,w:20,h:56, hgt:22},
-  {n:"管理棟",               x:224,y:56,w:14,h:44, hgt:14},
-  {n:"大型ビジョン",         x:104,y:2, w:18,h:8,  hgt:12},
+  {n:"メインステージ屋根", x:150,y:2, w:60,h:16, hgt:16},
+  {n:"サブステージ屋根",   x:28, y:4, w:36,h:12, hgt:10},
+  {n:"西側仮設棟",         x:2,  y:58,w:20,h:56, hgt:22},
+  {n:"東管理棟",           x:224,y:56,w:14,h:44, hgt:14},
+  {n:"PA卓",               x:104,y:2, w:18,h:8,  hgt:12},
 ];
 ZONES.forEach(z=>{
   z.area=z.w*z.h;
@@ -1017,8 +1017,8 @@ function drawMap(){
   for(const b of BUILDINGS){
     ctx.fillStyle="#151F38"; ctx.strokeStyle="#3A4F82";
     ctx.fillRect(X(b.x),Y(b.y),b.w*sx,b.h*sy); ctx.strokeRect(X(b.x),Y(b.y),b.w*sx,b.h*sy);
-    ctx.fillStyle="#61719A"; ctx.font="8.5px 'IBM Plex Mono',monospace";
-    ctx.fillText(b.hgt+"m", X(b.x)+3, Y(b.y)+10);
+    ctx.fillStyle="#9FB0D8"; ctx.font="8.5px 'IBM Plex Mono',monospace";
+    ctx.fillText(b.n, X(b.x)+3, Y(b.y)+10);
   }
   /* sun compass */
   const cx=cssW-46, cy=44, R=22;
