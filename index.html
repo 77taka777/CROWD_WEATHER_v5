@@ -1398,7 +1398,7 @@ function renderJudge(){
     ["users","Fruin密度と誘導","密度は人/m²の実単位。日陰誘導は2.0人/m²の容量制約つき再配分——『使うほど危険』を構造的に回避。"]];
   $("#engineSteps").innerHTML=steps.map(s=>'<div class="step"><div class="ic">'+ic(s[0],16)+'</div><div><h5>'+s[1]+' <span class="badge b-ok" style="font-size:9px;padding:1px 7px;vertical-align:1px">実計算</span></h5><p>'+s[2]+'</p></div></div>').join("");
 
-  const road=[["01","会場図面PDF→初期モデル自動生成（会場図面読み込み）","【AIである必然性】を1→5点に動かす一手。デモの中心へ。",true],
+  const road=[["01","会場図面PDF→初期モデル自動生成（会場図面読み込み）","会場写真を取り込み、AIで各エリアを切り分け。3Dモデル化し、混雑・暑熱リスクをヒートマップで可視化する。",true],
     ["02","運用計画書のPDF出力","「手元に残る」まで通す。ビジネス成立性と完成度に同時に効く。",true],
     ["03","LLMコストの実測表","呼び出し回数や、APIコストの明示化。",true],
     ["04","運営スタッフの最適配置の提案","混雑ピーク・暑熱リスク・ゲート流量から、時間帯別のゲート／救護／誘導スタッフ配置を提案する。",true]];
