@@ -1377,7 +1377,8 @@ function renderJudge(){
   $("#costBars").innerHTML=
     '<div class="cb"><div class="cl"><span>全件フロンティア直叩き（1イベント）</span><b>¥'+fmt(frontier)+'</b></div><div class="tr"><i style="width:100%;background:linear-gradient(90deg,#F87171,#FB923C)"></i></div></div>'
     +'<div class="cb"><div class="cl"><span>OrcaRouter ルーティング後</span><b style="color:var(--ok)">¥'+fmt(routed)+'（-'+Math.round((1-routed/frontier)*100)+'%）</b></div><div class="tr"><i style="width:'+w+'%;background:linear-gradient(90deg,#34D399,#38BDF8)"></i></div></div>'
-    +'<div style="font-size:10px;color:var(--t3);font-family:var(--mono)">前提: チャット'+fmt(chatN)+'件・通知'+fmt(notifN)+'件・文書'+planN+'件 ── チケット数に連動する試算値</div>';
+    +'<div style="margin-top:8px;padding:9px 11px;border:1px solid rgba(56,189,248,.38);background:rgba(56,189,248,.08);border-radius:10px;font-size:10.5px;color:var(--sky2);font-family:var(--mono);line-height:1.65">'
+    +'<b style="color:var(--t1)">上の棒グラフの前提</b> ── チケット数から想定した処理量（チャット'+fmt(chatN)+'件・通知'+fmt(notifN)+'件・文書'+planN+'件）で、<b style="color:var(--warn)">全件フロンティア直叩き</b>と<b style="color:var(--ok)">OrcaRouterルーティング後</b>のコストを比較しています。</div>';
 
   const open=[["人流統計","東京データプラットフォーム","混雑"],["道路ネットワーク・幅員","東京都オープンデータ","混雑"],["駅別乗降者数","東京都・各鉄道","混雑"],["3D都市モデル(建物形状)","PLATEAU","暑熱"],["暑さ指数・気象データ","環境省・気象庁","暑熱"],["イベント情報・クールスポット","東京都オープンデータ","両方"]];
   const priv=[["チケット販売数","主催者 ── 来場規模の最重要変数","混雑"],["入退場ゲートログ・場内売上","主催者","混雑"],["Wi-Fi/ビーコン滞留実測","自社センシング","混雑"],["カメラ人流センシング","自社センシング","両方"],["来場者アプリ利用ログ","CROWD WEATHER ── 精度を上げる実測","両方"]];
