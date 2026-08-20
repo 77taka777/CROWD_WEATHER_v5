@@ -359,6 +359,84 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 .sb span{font-family:var(--mono);font-size:8.5px;color:var(--t3)}
 .sb.on span{color:var(--sky2)}
 </style>
+<style>
+/* ============================================================
+   v5.3 ── 現場向けビューを「タブレット筐体」で見せる
+   ============================================================ */
+.tab-stage{display:flex;flex-direction:column;align-items:center;gap:10px}
+.tab-device{
+  position:relative;width:100%;max-width:1180px;
+  background:linear-gradient(157deg,#1E2A49 0%,#0C1220 46%,#16203A 100%);
+  border:1px solid #35497A;border-radius:32px;
+  padding:24px 20px 17px;
+  box-shadow:0 34px 90px rgba(0,0,0,.62),0 2px 0 rgba(255,255,255,.03),
+             inset 0 1px 0 rgba(255,255,255,.075),inset 0 -1px 0 rgba(0,0,0,.45);
+}
+/* 側面ボタン（音量・電源） */
+.tab-device::before,.tab-device::after{
+  content:"";position:absolute;right:-3px;width:3px;border-radius:0 3px 3px 0;
+  background:linear-gradient(180deg,#2B3A61,#131B2E);
+}
+.tab-device::before{top:78px;height:44px}
+.tab-device::after{top:136px;height:78px}
+/* インカメラ */
+.tab-cam{position:absolute;top:9px;left:50%;transform:translateX(-50%);
+  width:7px;height:7px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#3C4E7A,#080D18 70%);
+  box-shadow:0 0 0 1px rgba(56,189,248,.16)}
+.tab-screen{
+  position:relative;display:flex;flex-direction:column;
+  height:clamp(540px,74vh,880px);
+  background:var(--ink1);border:1px solid #101A2E;border-radius:18px;overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(56,189,248,.05),0 0 34px rgba(0,0,0,.5)
+}
+.tab-status{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:8px 16px;border-bottom:1px solid var(--line);
+  background:rgba(6,10,20,.82);backdrop-filter:blur(8px);
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3)}
+.tab-status .tsl{display:flex;align-items:center;gap:9px;min-width:0}
+.tab-status .tsl b{color:var(--t1);font-size:11.5px;letter-spacing:.06em}
+.tab-status .tsl span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab-status .tsr{display:flex;align-items:center;gap:9px;flex:none}
+.tab-status .tsr .wifi{color:var(--sky)}
+.tab-status .batt{display:inline-flex;align-items:center;gap:3px}
+.tab-status .batt i{width:17px;height:8.5px;border:1px solid var(--t3);border-radius:2px;position:relative;display:inline-block}
+.tab-status .batt i::before{content:"";position:absolute;inset:1.5px;width:70%;background:var(--ok);border-radius:1px}
+.tab-status .batt i::after{content:"";position:absolute;right:-3px;top:2px;width:1.5px;height:4px;background:var(--t3);border-radius:0 1px 1px 0}
+.tab-body{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:16px 18px 34px;
+  scrollbar-width:thin;scrollbar-color:#2E4270 transparent}
+.tab-body::-webkit-scrollbar{width:9px}
+.tab-body::-webkit-scrollbar-thumb{background:#243257;border-radius:99px;border:3px solid transparent;background-clip:content-box}
+.tab-body::-webkit-scrollbar-thumb:hover{background:#38507F;background-clip:content-box}
+/* 下端のスクロールヒント */
+.tab-fade{position:absolute;left:0;right:0;bottom:0;height:44px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,15,30,0),rgba(10,15,30,.92));
+  opacity:1;transition:opacity .25s}
+.tab-screen.at-end .tab-fade{opacity:0}
+.tab-home{margin:11px auto 0;width:128px;height:4px;border-radius:99px;background:#28375C}
+.tab-cap{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.16em;color:var(--t3)}
+.tab-cap i{width:5px;height:5px;border-radius:50%;background:var(--sky);
+  box-shadow:0 0 0 3px rgba(56,189,248,.14);display:inline-block}
+/* 給水/避難タブの折り返しを止める */
+#odSeg{max-width:250px}
+#odSeg button{white-space:nowrap;padding:7px 9px}
+/* 筐体ぶんだけ内側が狭くなるので、ビュー内のブレークポイントを前倒しする */
+@media(max-width:1080px){ #view-live .g-live{grid-template-columns:1fr} }
+@media(max-width:1060px){ #view-live .g-staff{grid-template-columns:1fr} }
+@media(max-width:1080px){
+  .tab-device{padding:20px 12px 13px;border-radius:26px}
+  .tab-body{padding:14px 13px 32px}
+}
+/* 端末モックが邪魔になる幅ではフラットに戻す */
+@media(max-width:720px){
+  .tab-device{background:none;border:0;border-radius:0;padding:0;box-shadow:none}
+  .tab-device::before,.tab-device::after,.tab-cam,.tab-home,.tab-status,.tab-fade{display:none}
+  .tab-screen{height:auto;background:none;border:0;border-radius:0;overflow:visible;box-shadow:none}
+  .tab-body{overflow:visible;padding:0}
+  .tab-cap{display:none}
+}
+</style>
 </head>
 <body>
 
@@ -444,7 +522,7 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
         <div class="ctl"><div class="row"><label><span data-ic="ticket"></span>チケット販売数</label><output id="tktOut"></output></div><input type="range" id="tktRange" min="3000" max="30000" step="500"></div>
         <label class="switch" style="margin:14px 0 4px"><input type="checkbox" id="guideChk" checked><span class="tr"></span><span>容量考慮の日陰誘導（Fruin 2.0人/m²上限）</span></label>
         <div class="note" style="margin-top:12px" id="guideNote"></div>
-        <div class="note" style="margin-top:12px">実況・過去の気象（Open-Meteo）と東京都オープンデータ（都営給水スポット）をAPI連携済み。予報値から計画書・現場指示・来場者通知をAI生成。今後は許可取得後、過去の人流データや実会場のセンシングデータも取り込み、配置提案や事前シミュレーションまでAI活用を拡張します。</div>
+        <div class="note" style="margin-top:12px">実況を反映→過去の気象（Open-Meteo）・東京都オープンデータをAPI連携済み。予報値から計画書・現場指示・来場者通知をAI生成。今後は許可取得後、過去の人流データや実会場のセンシングデータも取り込み、配置提案や事前シミュレーションまでAI活用を拡張します。</div>
       </div>
     </div>
 
@@ -479,11 +557,11 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
     <div class="panel" style="margin-top:16px" id="odPanel">
       <div class="hf-head">
         <div>
-          <div class="eyebrow"><span data-ic="database"></span>TOKYO OPEN DATA ── 会場周辺インフラ</div>
+          <div class="eyebrow"><span data-ic="database"></span>TOKYO OPEN DATA ── もしもの時の避難・給水運営計画まで自動生成</div>
           <div class="ptitle" style="margin-bottom:0" id="odTitle">会場周辺の給水スポット<small id="odTitleSub">東京都水道局「Tokyowater Drinking Station 一覧」をAPIでライブ取得</small></div>
         </div>
         <div class="hf-tools">
-          <div class="seg" id="odSeg" style="max-width:230px"></div>
+          <div class="seg" id="odSeg"></div>
           <button class="playbtn" id="odReload"><span data-ic="refresh"></span><span>再取得</span></button>
         </div>
       </div>
@@ -497,6 +575,19 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 
   <!-- ================= 現場向け ================= -->
   <section class="view" id="view-live">
+   <div class="tab-stage">
+    <div class="tab-device">
+      <div class="tab-cam" aria-hidden="true"></div>
+      <div class="tab-screen" id="tabScreen">
+        <div class="tab-status" aria-hidden="true">
+          <span class="tsl"><b id="tabClock">--:--</b><span>ONSITE OPS ／ TOKYO SUMMER FES 2026</span></span>
+          <span class="tsr">
+            <span class="wifi">WI-FI</span>
+            <span id="tabDate">--</span>
+            <span class="batt">82%<i></i></span>
+          </span>
+        </div>
+        <div class="tab-body" id="tabBody">
     <div class="kpis" id="liveKpis"></div>
     <div class="grid g-live">
       <div class="panel">
@@ -532,6 +623,13 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
       <div class="ptitle">この先の予報<small>現在時刻マーカー付き</small></div>
       <div class="tl-wrap"><svg id="tlchartLive"></svg></div>
     </div>
+        </div>
+        <div class="tab-fade" aria-hidden="true"></div>
+      </div>
+      <div class="tab-home" aria-hidden="true"></div>
+    </div>
+    <div class="tab-cap"><i></i>ONSITE TABLET VIEW ── 現場端末（10.9インチ想定）</div>
+   </div>
   </section>
 
   <!-- ================= 来場者向け ================= -->
@@ -1282,6 +1380,10 @@ function renderLive(){
     +kpi("thermometer","WBGT",f1(p.maxW),"",HEAT_LABEL[hr]+"・日陰率 "+Math.round(p.shadeAvg*100)+"%",["ok","warn","heat","danger"][hr])
     +kpi("bell","総合ステータス",["平常","注意","警戒","危険"][Math.max(lvl,hr)],"",hhmm(S.hour)+" 時点の実況",["ok","warn","heat","danger"][Math.max(lvl,hr)]);
 
+  const tc=$("#tabClock"); if(tc) tc.textContent=hhmm(S.hour);
+  const td=$("#tabDate");
+  if(td){ const dm=/^(\d{4})-(\d{2})-(\d{2})$/.exec(S.date||""); td.textContent = dm ? (dm[2]*1)+"/"+(dm[3]*1) : "--"; }
+
   $("#liveBoardSub").textContent=hhmm(S.hour)+" 時点（時刻はタイムラインで移動）";
   const rows=p.zones.slice().sort((a,b)=>b.d-a.d).map(z=>{
     const st=Math.max(z.dl, z.hr>=2?z.hr:0);
@@ -1625,6 +1727,7 @@ function setView(v){
   document.querySelectorAll(".view").forEach(el=>el.classList.toggle("on",el.id==="view-"+v));
   document.querySelectorAll("#lens button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   $("#genSub").textContent=LENSES.find(l=>l.id===v).doc;
+  if(v==="live"){ const tb=$("#tabBody"); if(tb) tb.scrollTop=0; }
   try{history.replaceState(null,"","?view="+v);}catch(e){}
   update();
 }
@@ -1716,6 +1819,19 @@ function init(){
     if(["1","2","3"].includes(e.key)&&!/input|textarea/i.test(document.activeElement.tagName)) setView(LENSES[+e.key-1].id);
   });
   window.addEventListener("resize",()=>{ if(S.view==="plan"){drawMap();drawSunTrack();} if(S.view==="live"){drawTimeline("#tlchartLive",{now:true});renderStaffMap();} });
+  /* タブレット筐体: 下端フェード（これ以上スクロールできない時は消す） */
+  (function(){
+    const body=$("#tabBody"), screen=$("#tabScreen");
+    if(!body||!screen) return;
+    const sync=()=>{
+      const room=body.scrollHeight-body.clientHeight;
+      screen.classList.toggle("at-end", room<=8 || body.scrollTop>=room-8);
+    };
+    body.addEventListener("scroll",sync,{passive:true});
+    window.addEventListener("resize",sync);
+    if(window.ResizeObserver) new ResizeObserver(sync).observe(body);
+    sync();
+  })();
   /* deep link */
   const q=new URLSearchParams(location.search).get("view");
   const v=LENSES.some(l=>l.id===q)?q:"plan";
