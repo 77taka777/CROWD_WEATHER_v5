@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CROWD WEATHER v5 ── 混雑は、予報できる。</title>
-<meta name="description" content="混雑と暑熱を『予報』に変えるイベント安全プラットフォーム。ひとつの予報エンジンを、制作・現場・来場者・審査の4つのレンズで。">
+<meta name="description" content="混雑と暑熱を『予報』に変えるイベント安全プラットフォーム。ひとつの予報エンジンを、制作・現場・来場者の3つのレンズで。">
 <meta name="theme-color" content="#0A0F1E">
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A0F1E'/%3E%3Cpath d='M23 20a5 5 0 1 0-1-9.9A7.5 7.5 0 1 0 9 20z' fill='none' stroke='%2338BDF8' stroke-width='2'/%3E%3Ccircle cx='12' cy='25' r='1.6' fill='%2338BDF8'/%3E%3Ccircle cx='17' cy='25' r='1.6' fill='%2338BDF8'/%3E%3Ccircle cx='22' cy='25' r='1.6' fill='%23FBBF24'/%3E%3C/svg%3E">
@@ -224,32 +224,6 @@ table.board tr td:first-child{font-weight:600;white-space:nowrap}
 .aim-tags{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px}
 .aim-foot{font-size:10.5px;line-height:1.7;color:var(--t3);border-top:1px dashed var(--line);padding-top:8px}
 
-/* judge */
-.jgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:1080px){.jgrid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){.jgrid{grid-template-columns:1fr}}
-.jcard{background:linear-gradient(180deg,var(--ink2),var(--ink1) 150%);border:1px solid var(--line);border-radius:var(--r);padding:14px 15px;display:flex;flex-direction:column;gap:8px}
-.jcard .no{font-family:var(--mono);font-size:9.5px;color:var(--sky);letter-spacing:.2em}
-.jcard h4{margin:0;font-size:13px;font-weight:700}
-.jcard p{margin:0;font-size:11px;color:var(--t2);line-height:1.7;flex:1}
-.rtable{width:100%;border-collapse:collapse;font-size:11.5px}
-.rtable th{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--t3);text-align:left;font-weight:500;padding:0 8px 8px}
-.rtable td{padding:8px;border-top:1px solid var(--line)}
-.costbars{display:grid;gap:10px;margin-top:12px}
-.cb .cl{display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:5px}
-.cb .cl b{font-family:var(--mono);color:var(--t1)}
-.cb .tr{height:12px;border-radius:99px;background:var(--ink1);border:1px solid var(--line);overflow:hidden}
-.cb .tr i{display:block;height:100%}
-.datacol{display:grid;gap:9px}
-.dcard{background:var(--ink1);border:1px solid var(--line);border-radius:var(--rs);padding:10px 12px}
-.dcard .nm{font-weight:700;font-size:12px}
-.dcard .src{font-family:var(--mono);font-size:9.5px;color:var(--t3);margin:3px 0 6px}
-.step{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
-.step:first-of-type{border-top:0}
-.step .ic{width:34px;height:34px;border-radius:9px;background:rgba(56,189,248,.08);border:1px solid var(--line2);display:grid;place-items:center;color:var(--sky);flex:none}
-.step h5{margin:0 0 3px;font-size:12.5px}
-.step p{margin:0;font-size:11px;color:var(--t2);line-height:1.65}
-
 /* modal */
 #shade{position:fixed;inset:0;background:rgba(4,7,14,.7);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
 #shade.on{display:flex}
@@ -343,6 +317,48 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
   #printDoc .lv0{color:#0f7a52}#printDoc .lv1{color:#946000}#printDoc .lv2{color:#b45309}#printDoc .lv3{color:#b91c1c;font-weight:700}
 }
 </style>
+<style>
+/* ============================================================
+   v5.1 EXTENSIONS ── 過去気象リプレイ / 東京都OD給水スポット / スタッフ配置
+   ============================================================ */
+.pastrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pastbtn{display:inline-flex;align-items:center;gap:6px;background:var(--ink3);border:1px solid var(--line2);color:var(--t1);font-family:var(--body);font-size:11.5px;font-weight:600;padding:9px 12px;border-radius:var(--rs);cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.pastbtn:hover{border-color:var(--sky)}
+.pastbtn:disabled{opacity:.55;cursor:wait}
+.pastbtn svg{color:var(--sky)}
+.pastchip{background:var(--ink2);border:1px dashed var(--line2);color:var(--t2);font-family:var(--mono);font-size:10px;padding:7px 10px;border-radius:99px;cursor:pointer;transition:border-color .15s,color .15s}
+.pastchip:hover{border-color:var(--sky);color:var(--sky2)}
+.odgrid{display:grid;grid-template-columns:minmax(0,330px) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:860px){.odgrid{grid-template-columns:1fr}}
+.odmapwrap{background:var(--ink0);border:1px solid var(--line);border-radius:var(--rs);padding:8px}
+#odMap{width:100%;height:auto;display:block}
+.odlist{display:grid;gap:8px}
+.odrow{display:flex;gap:10px;align-items:center;background:var(--ink2);border:1px solid var(--line);border-radius:var(--rs);padding:8px 12px}
+.odrow .odn{flex:none;width:20px;height:20px;border-radius:99px;background:rgba(52,211,153,.14);border:1px solid var(--ok);color:var(--ok);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center}
+.odrow .odbody{min-width:0;flex:1}
+.odrow .odname{font-size:12px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.odrow .odsub{font-size:10px;color:var(--t3);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.odrow .oddist{flex:none;text-align:right;font-family:var(--mono);font-size:10px;color:var(--t3)}
+.odrow .oddist b{display:block;font-size:13px;color:var(--sky2)}
+.g-staff{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:16px;align-items:start;margin-top:4px}
+@media(max-width:960px){.g-staff{grid-template-columns:1fr}}
+#staffMap{width:100%;display:block;border-radius:var(--rs);border:1px solid var(--line);background:var(--ink0)}
+.stf-kv{display:flex;justify-content:space-between;align-items:baseline;background:var(--ink3);border:1px solid var(--line2);border-radius:var(--rs);padding:9px 12px;font-size:11.5px;color:var(--t2);margin-bottom:8px}
+.stf-kv b{font-family:var(--disp);font-size:15px;color:var(--t1)}
+.stf-row{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--t2);padding:5px 2px;border-bottom:1px dashed var(--line)}
+.stf-row i{width:9px;height:9px;border-radius:3px;flex:none}
+.stf-row b{margin-left:auto;font-family:var(--mono);color:var(--t1)}
+.staffbars{margin-top:12px}
+.sb-title{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3);margin-bottom:6px}
+.sb-row{display:flex;gap:4px;align-items:flex-end}
+.sb{flex:1;text-align:center;cursor:pointer;border-radius:6px;padding:3px 1px 2px;border:1px solid transparent}
+.sb:hover{border-color:var(--line2)}
+.sb.on{background:var(--ink3);border-color:var(--sky)}
+.sb-col{display:flex;flex-direction:column-reverse;align-items:stretch;gap:1px;height:92px;justify-content:flex-start}
+.sb-col i{display:block;border-radius:1.5px;min-height:0}
+.sb span{font-family:var(--mono);font-size:8.5px;color:var(--t3)}
+.sb.on span{color:var(--sky2)}
+</style>
 </head>
 <body>
 
@@ -410,6 +426,15 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
           </div>
         </div>
         <div class="ctl">
+          <div class="row"><label><span data-ic="clock"></span>実測・過去の気象を反映</label></div>
+          <div class="pastrow">
+            <button class="pastbtn" id="pastFetch" type="button"><span data-ic="cloud"></span>開催日の気象を取得</button>
+            <button class="pastchip" id="pastLastYear" type="button">昨年同日を再現</button>
+            <button class="pastchip" id="pastTwoYears" type="button">一昨年同日を再現</button>
+          </div>
+          <div class="note mono" id="pastNote" style="margin-top:10px;display:none"></div>
+        </div>
+        <div class="ctl">
           <div class="row"><label><span data-ic="sun"></span>天候</label></div>
           <div class="seg" id="wxSeg"></div>
         </div>
@@ -419,7 +444,7 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
         <div class="ctl"><div class="row"><label><span data-ic="ticket"></span>チケット販売数</label><output id="tktOut"></output></div><input type="range" id="tktRange" min="3000" max="30000" step="500"></div>
         <label class="switch" style="margin:14px 0 4px"><input type="checkbox" id="guideChk" checked><span class="tr"></span><span>容量考慮の日陰誘導（Fruin 2.0人/m²上限）</span></label>
         <div class="note" style="margin-top:12px" id="guideNote"></div>
-        <div class="note" style="margin-top:12px">現在は、予報値から計画書・現場指示・来場者通知をAI生成。今後は許可取得後、過去の人流データや実会場のセンシングデータも取り込み、配置提案や事前シミュレーションまでAI活用を拡張します。</div>
+        <div class="note" style="margin-top:12px">実況・過去の気象（Open-Meteo）と東京都オープンデータ（都営給水スポット）をAPI連携済み。予報値から計画書・現場指示・来場者通知をAI生成。今後は許可取得後、過去の人流データや実会場のセンシングデータも取り込み、配置提案や事前シミュレーションまでAI活用を拡張します。</div>
       </div>
     </div>
 
@@ -451,6 +476,22 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
         <div id="planDigest" style="font-size:12px;color:var(--t2);line-height:2"></div>
       </div>
     </div>
+    <div class="panel" style="margin-top:16px" id="odPanel">
+      <div class="hf-head">
+        <div>
+          <div class="eyebrow"><span data-ic="database"></span>TOKYO OPEN DATA ── 都営給水スポット</div>
+          <div class="ptitle" style="margin-bottom:0">会場周辺の給水スポット<small>東京都水道局「Tokyowater Drinking Station 一覧」をカタログAPIでライブ取得</small></div>
+        </div>
+        <div class="hf-tools">
+          <button class="playbtn" id="odReload"><span data-ic="refresh"></span><span>再取得</span></button>
+        </div>
+      </div>
+      <div class="odgrid" style="margin-top:12px">
+        <div class="odmapwrap"><svg id="odMap" aria-label="会場を中心とした給水スポットの方位・距離マップ"></svg></div>
+        <div class="odlist" id="odList"><div class="note">ページ表示時に自動取得します。</div></div>
+      </div>
+      <div class="note mono" id="odMeta" style="margin-top:12px">出典: 東京都水道局「Tokyowater Drinking Station 一覧」（CC BY 4.0）── 東京都オープンデータカタログ CKAN APIで取得</div>
+    </div>
   </section>
 
   <!-- ================= 現場向け ================= -->
@@ -467,6 +508,23 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
         <div class="ptitle">アラート<small>実況とこの先3時間の予測</small></div>
         <div class="feed" id="alertFeed"></div>
       </div>
+    </div>
+    <div class="panel" style="margin-top:16px" id="staffPanel">
+      <div class="hf-head">
+        <div>
+          <div class="eyebrow"><span data-ic="hard-hat"></span>STAFF DEPLOYMENT ── スタッフ最適配置</div>
+          <div class="ptitle" style="margin-bottom:0">スタッフ最適配置マップ<small id="staffSub"></small></div>
+        </div>
+        <div class="legend" id="staffLegend" style="margin-top:0"></div>
+      </div>
+      <div class="g-staff">
+        <div><canvas id="staffMap" width="720" height="470" aria-label="時間帯別のスタッフ最適配置マップ"></canvas></div>
+        <div>
+          <div id="staffSummary"></div>
+          <div class="staffbars" id="staffBars"></div>
+        </div>
+      </div>
+      <div class="note" id="staffNote" style="margin-top:12px"></div>
     </div>
     <div class="panel" style="margin-top:16px">
       <div class="eyebrow"><span data-ic="activity"></span>NEXT HOURS</div>
@@ -508,48 +566,6 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
       </div>
     </div>
   </section>
-
-  <!-- ================= 審査向け ================= -->
-  <section class="view" id="view-judge">
-    <div class="panel tight" style="margin-bottom:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
-      <div>
-        <div class="eyebrow" style="margin-bottom:2px"><span data-ic="award"></span>FOR JUDGES</div>
-        <div style="font-size:12.5px;color:var(--t2);line-height:1.7">審査基準8項目への回答・AIレイヤー・データ設計・実装の中身を1画面に集約。左上の3ビューが動くデモ本体です。</div>
-      </div>
-    </div>
-    <div class="jgrid" id="judgeGrid"></div>
-
-    <div class="grid g-2" style="margin-top:16px">
-      <div class="panel">
-        <div class="eyebrow"><span data-ic="cpu"></span>AI LAYER ── ORCAROUTER</div>
-        <div class="ptitle">タスク別ルーティングとコスト<small>チケット数スライダーに連動</small></div>
-        <div style="overflow-x:auto"><table class="rtable" id="routeTable"></table></div>
-        <div class="costbars" id="costBars"></div>
-        <div class="note mono" style="margin-top:12px">統合はサーバー側API経由でOrcaRouterに接続。APIキーはフロントに出さず安全に管理。文書生成の「指示を出力」ボタンが実デモ（API不通時はルールベース生成に自動フォールバック）。</div>
-      </div>
-      <div class="panel">
-        <div class="eyebrow"><span data-ic="database"></span>DATA DESIGN</div>
-        <div class="ptitle">オープンデータ × 自社データ</div>
-        <div class="grid g-2" style="gap:10px">
-          <div class="datacol" id="dataOpen"></div>
-          <div class="datacol" id="dataPriv"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid g-2" style="margin-top:16px">
-      <div class="panel">
-        <div class="eyebrow"><span data-ic="layers"></span>ENGINE ── 実計算</div>
-        <div class="ptitle">ヒューリスティックではなく、物理と規格</div>
-        <div id="engineSteps"></div>
-      </div>
-      <div class="panel">
-        <div class="eyebrow"><span data-ic="trending-up"></span>ROADMAP</div>
-        <div class="ptitle">今後詰めていきたいところ</div>
-        <div id="roadmap"></div>
-      </div>
-    </div>
-  </section>
 </main>
 
 <div id="printDoc" aria-hidden="true"></div>
@@ -566,7 +582,7 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
     <footer>
       <button class="mbtn" id="docCopy"><span data-ic="copy"></span>コピー</button>
       <button class="mbtn" id="docRegen"><span data-ic="refresh"></span>再生成</button>
-      <span class="hint">本番構成: OrcaRouter経由でAI生成を最適化</span>
+      <span class="hint">本番構成: 汎用LLM API（既定: Google Gemini／環境変数で差し替え可能）</span>
     </footer>
   </div>
 </div>
@@ -575,14 +591,14 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 <footer class="site">
   <div class="wrap">
     <span>CROWD WEATHER v5</span>
-    <span class="sp">NOAA SOLAR × SHADOW PROJECTION × WBGT × FRUIN</span>
+    <span class="sp">NOAA SOLAR × SHADOW PROJECTION × WBGT × FRUIN × TOKYO OPEN DATA</span>
   </div>
 </footer>
 <script>
 "use strict";
 /* ============================================================
    CROWD WEATHER v5 — single-file, no build, no dependencies.
-   ひとつの予報エンジンを、4つのレンズ（制作/現場/来場者/審査）で。
+   ひとつの予報エンジンを、3つのレンズ（制作/現場/来場者）で。
    ============================================================ */
 
 /* ---------- icons (24x24 stroke, lucide-style) ---------- */
@@ -1339,6 +1355,7 @@ function renderVisitor(){
     +'<div style="display:flex;gap:9px">'+ic("clock",14,'style="color:var(--ok);flex:none;margin-top:2px"')+'<span><b>ベスト入場 '+best.h+':00頃</b> ── いまより空いて回れます</span></div>'
     +'<div style="display:flex;gap:9px">'+ic("map-pin",14,'style="color:var(--sky);flex:none;margin-top:2px"')+'<span><b>日陰ルート</b> ── '+(shady.length?shady.map(z=>esc(z.n)).join("→")+' 経由が日陰率高め':"夕方以降は全域で快適")+'</span></div>'
     +'<div style="display:flex;gap:9px">'+ic("droplet",14,'style="color:var(--sky2);flex:none;margin-top:2px"')+'<span><b>クールスポット</b> ── フードコート屋根下／ミスト（芝生広場）</span></div>'
+    +odVisitorRow()
     +'</div></div>';
   $("#pnav").innerHTML=
     '<div class="on">'+ic("activity",15)+'予報</div><div>'+ic("map-pin",15)+'マップ</div><div>'+ic("bell",15)+'通知</div>';
@@ -1346,66 +1363,6 @@ function renderVisitor(){
 </script>
 <script>
 "use strict";
-/* ---------- 審査向け ---------- */
-const CRITERIA=[
-  {t:"課題の実在性",ic:"alert-triangle",p:"雑踏事故と熱中症搬送は毎夏の実課題。現状の取引先であるイベント会社にもヒアリングを実施済。"},
-  {t:"ビジネス成立性",ic:"trending-up",p:"主催者向けB2B SaaS（計画+当日運用）＋自治体・鉄道連携。来場者アプリは無料で、利用ログが予報精度を上げる還流構造。"},
-  {t:"完成度・デモ説得力",ic:"eye",p:"制作→現場→来場者を同一エンジンで一気通貫。数値はすべて実計算で、スライダー操作に全ビューが即応。"},
-  {t:"AIである必然性",ic:"cpu",p:"「指示を出力」が中核デモ：予報値から計画書・現場指示・アナウンス文を生成。今後は、許可が取れ次第、過去の人流データ・会場図の実データを学習想定。"},
-  {t:"技術的な作り込み",ic:"layers",p:"NOAA太陽位置×影投影×Stull湿球/黒球WBGT×Fruin密度。日陰への人流移動も視野に、各関係者へリアルタイムでデータ反映される見やすいシステムに工夫。"},
-  {t:"LLMコスト",ic:"gauge",p:"OrcaRouterで難易度グレーディング→振り分け。コスト主因の来場者チャットを軽量モデルへ逃がし約8割削減（下表・実測予定）。"},
-  {t:"セキュリティ",ic:"lock",p:"個人を特定しない統計量のみ扱う設計。APIキーはサーバ側、フロントは予報値のみ。脅威モデル1枚を添付予定。"},
-  {t:"次世代性・独創性",ic:"sparkles",p:"機能ではなく時間軸を変えた——「現在の可視化」から「予報」へ。混雑天気記号という新しい共通言語を提案。"}
-];
-const ROUTES=[
-  {task:"計画書・現場指示の文章化",d:0.86,model:"frontier",price:9},
-  {task:"来場者こまりごとチャット",d:0.45,model:"mid",price:1.8},
-  {task:"多言語アナウンス変換",d:0.18,model:"軽量OSS",price:0.12}
-];
-function renderJudge(){
-  $("#judgeGrid").innerHTML=CRITERIA.map((c,i)=>
-    '<div class="jcard"><div class="no">CRITERIA '+String(i+1).padStart(2,"0")+'</div>'
-    +'<h4 style="display:flex;align-items:center;gap:7px"><span style="color:var(--sky)">'+ic(c.ic,14)+'</span>'+c.t+'</h4>'
-    +'<p>'+c.p+'</p></div>').join("");
-
-  const chatN=Math.round(S.tickets*0.8), notifN=Math.round(S.tickets*2.4), planN=6;
-  const frontier=(chatN+notifN+planN)*9;
-  const routed=planN*9+chatN*1.8+notifN*0.12;
-  $("#routeTable").innerHTML='<thead><tr><th>タスク</th><th>難易度</th><th>ルート先</th><th>単価</th></tr></thead><tbody>'
-    +ROUTES.map(r=>'<tr><td>'+r.task+'</td><td style="font-family:var(--mono);color:var(--sky2)">'+r.d.toFixed(2)+'</td>'
-      +'<td><span class="badge '+(r.model==="frontier"?"b-sky":r.model==="mid"?"b-warn":"b-ok")+'">'+r.model+'</span></td>'
-      +'<td style="font-family:var(--mono);color:var(--t3)">¥'+r.price+'/件</td></tr>').join("")+'</tbody>';
-  const w=Math.max(4,routed/frontier*100);
-  $("#costBars").innerHTML=
-    '<div class="cb"><div class="cl"><span>全件フロンティア直叩き（1イベント）</span><b>¥'+fmt(frontier)+'</b></div><div class="tr"><i style="width:100%;background:linear-gradient(90deg,#F87171,#FB923C)"></i></div></div>'
-    +'<div class="cb"><div class="cl"><span>OrcaRouter ルーティング後</span><b style="color:var(--ok)">¥'+fmt(routed)+'（-'+Math.round((1-routed/frontier)*100)+'%）</b></div><div class="tr"><i style="width:'+w+'%;background:linear-gradient(90deg,#34D399,#38BDF8)"></i></div></div>'
-    +'<div style="margin-top:8px;padding:9px 11px;border:1px solid rgba(56,189,248,.38);background:rgba(56,189,248,.08);border-radius:10px;font-size:10.5px;color:var(--sky2);font-family:var(--mono);line-height:1.65">'
-    +'<b style="color:var(--t1)">上の棒グラフの前提</b> ── チケット数から想定した処理量（チャット'+fmt(chatN)+'件・通知'+fmt(notifN)+'件・文書'+planN+'件）で、<b style="color:var(--warn)">全件フロンティア直叩き</b>と<b style="color:var(--ok)">OrcaRouterルーティング後</b>のコストを比較しています。</div>';
-
-  const open=[["人流統計","東京データプラットフォーム","混雑"],["道路ネットワーク・幅員","東京都オープンデータ","混雑"],["駅別乗降者数","東京都・各鉄道","混雑"],["3D都市モデル(建物形状)","PLATEAU","暑熱"],["暑さ指数・気象データ","環境省・気象庁","暑熱"],["イベント情報・クールスポット","東京都オープンデータ","両方"]];
-  const priv=[["チケット販売数","主催者 ── 来場規模の最重要変数","混雑"],["入退場ゲートログ・場内売上","主催者","混雑"],["Wi-Fi/ビーコン滞留実測","自社センシング","混雑"],["カメラ人流センシング","自社センシング","両方"],["来場者アプリ利用ログ","CROWD WEATHER ── 精度を上げる実測","両方"]];
-  const dc=(d,lock)=>{
-    const liveNote=d[0]==="暑さ指数・気象データ"
-      ?'<div class="src" style="color:var(--ok);font-weight:700">反映済 Open-Meteoを利用</div>'
-      :"";
-    return '<div class="dcard"><div class="nm">'+(lock?ic("lock",11)+" ":"")+d[0]+'</div>'+liveNote+'<div class="src">'+d[1]+'</div><span class="badge '+(d[2]==="混雑"?"b-sky":d[2]==="暑熱"?"b-heat":"b-dim")+'">→ '+d[2]+'予測</span></div>';
-  };
-  $("#dataOpen").innerHTML='<div class="eyebrow" style="margin-bottom:6px">'+ic("database",11)+'OPEN ── 誰でも使える土台</div>'+open.map(d=>dc(d,false)).join("");
-  $("#dataPriv").innerHTML='<div class="eyebrow" style="margin-bottom:6px">'+ic("lock",11)+'PRIVATE ── 私たちだけの差</div>'+priv.map(d=>dc(d,true)).join("");
-
-  const steps=[["sun","NOAA太陽位置","日付・時刻・緯度経度から高度/方位を実計算。マップ右上のコンパスに表示。"],
-    ["layers","影投影","建物矩形×太陽ベクトルを凸包で射影し、ゾーンごとの日陰率をサンプリング。タープも同じ計算系。"],
-    ["thermometer","WBGT(Stull 2011)","湿球はStull式、黒球は日射・風速から近似。日なた/日陰の2値を占有率で合成。"],
-    ["users","Fruin密度と誘導","密度は人/m²の実単位。日陰誘導は2.0人/m²の容量制約つき再配分——『使うほど危険』を構造的に回避。"]];
-  $("#engineSteps").innerHTML=steps.map(s=>'<div class="step"><div class="ic">'+ic(s[0],16)+'</div><div><h5>'+s[1]+' <span class="badge b-ok" style="font-size:9px;padding:1px 7px;vertical-align:1px">実計算</span></h5><p>'+s[2]+'</p></div></div>').join("");
-
-  const road=[["01","会場図面PDF→初期モデル自動生成（会場図面読み込み）","会場写真を取り込み、AIで各エリアを切り分け。3Dモデル化し、混雑・暑熱リスクをヒートマップで可視化する。",true],
-    ["02","運用計画書のPDF出力","「手元に残る」まで通す。ビジネス成立性と完成度に同時に効く。",true],
-    ["03","LLMコストの実測表","呼び出し回数や、APIコストの明示化。",true],
-    ["04","運営スタッフの最適配置の提案","混雑ピーク・暑熱リスク・ゲート流量から、時間帯別のゲート／救護／誘導スタッフ配置を提案する。",true]];
-  $("#roadmap").innerHTML=road.map(r=>'<div class="step"><div class="ic" style="color:'+(r[3]?"var(--sky)":"var(--t3)")+'"><span style="font-family:var(--mono);font-size:11px;font-weight:600">'+r[0]+'</span></div><div><h5>'+r[1]+'</h5><p>'+r[2]+'</p></div></div>').join("");
-}
-
 /* ============================================================
    ACTIONS ── ①現状を反映 ②指示を出力
    ============================================================ */
@@ -1519,8 +1476,7 @@ function exportPlan(){
 const DOCDEF={
   plan:  {title:"運用計画書（ドラフト）", ask:"イベントの運用計画書ドラフト"},
   live:  {title:"現場指示 ── この先2時間",   ask:"現場スタッフ向けの直近2時間の運用指示"},
-  visitor:{title:"来場者向けアナウンス文",    ask:"来場者アプリのプッシュ通知と場内アナウンス文"},
-  judge: {title:"審査用サマリー（1分読み）",  ask:"審査員向けの1分で読めるプロダクトサマリー"}
+  visitor:{title:"来場者向けアナウンス文",    ask:"来場者アプリのプッシュ通知と場内アナウンス文"}
 };
 function docContext(){
   const p=snap(), sr=SERIES;
@@ -1601,13 +1557,6 @@ function ruleDoc(kind,c){
     hr("「"+top3[0].name+"が『"+top3[0].status+"』です。"+coolTarget(c.zones,top3[0].name)+"方面へどうぞ。」"); bl();
     hr("③ 暑熱通知");
     hr("「暑さ指数が『"+c.maxWBGT.label+"』。30分ごとに日陰で休憩し、給水所（芝生広場・フードコート）をご利用ください。」");
-  }else{
-    hr("━━ CROWD WEATHER ── 審査用サマリー ━━"); bl();
-    hr("課題: 雑踏事故と熱中症は「現在の可視化」では防げない。密度が危険域に入る前に手を打つには予報が要る。");
-    hr("解: 混雑と暑熱をひとつの予報に統合。NOAA太陽位置×影投影×WBGT×Fruin密度をすべて実計算。");
-    hr("いまの入力例: "+c.date+"・"+c.weather+"・チケット"+fmt(c.tickets)+"枚 → ピーク"+c.peak.time+" "+fmt(c.peak.n)+"人／最大密度"+c.peakDensity.v+"人/m²／最大WBGT "+c.maxWBGT.v+"。");
-    hr("AIの必然性: この予報値から計画書・現場指示・来場者通知を生成（本ボタンが実デモ）。OrcaRouterで難易度別に振り分けコスト約8割減。");
-    hr("独創性: 機能ではなく時間軸を変えた。同じ予報を制作・現場・来場者の3レンズで使う構造は、天気予報のメタファでしか成立しない。");
   }
   return L.join("\n");
 }
@@ -1621,12 +1570,12 @@ async function generateDoc(kind){
   const body=$("#docbody");
   body.classList.add("busy");
   body.innerHTML='<div><div class="spin"></div>予報値から生成しています…</div>';
-  let text=null, viaAI=false;
+  let text=null, viaAI=false, aiModel="LLM";
   try{
     const r=await fetch("/api/generate",{
       method:"POST", headers:{"Content-Type":"application/json"},
       signal:AbortSignal.timeout(60000),
-      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,
+      body:JSON.stringify({max_tokens:1000,
         messages:[{role:"user",content:
           "あなたはイベント安全管理の専門家。以下のJSON（混雑・暑熱予報の実計算値）だけを根拠に、日本語で「"+def.ask+"」を作成。"
           +"数値はJSONにあるものだけを使い、創作しない。見出し＋短文で、プレーンテキストのみ（Markdown記号なし）。500字程度。\n\n"
@@ -1634,7 +1583,8 @@ async function generateDoc(kind){
     });
     if(r.ok){
       const j=await r.json();
-      text=(j.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
+      text=(j.text||(j.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n")).trim();
+      aiModel=j.model||aiModel;
       viaAI=!!text;
     }
   }catch(e){ /* fall through */ }
@@ -1642,7 +1592,7 @@ async function generateDoc(kind){
   body.classList.remove("busy");
   body.textContent=text;
   $("#docSrc").innerHTML=viaAI
-    ?'<span class="badge b-sky">'+ic("cpu",10)+'AI生成 ── router→frontier</span>'
+    ?'<span class="badge b-sky">'+ic("cpu",10)+'AI生成 ── '+esc(aiModel)+'</span>'
     :'<span class="badge b-ok">'+ic("check",10)+'ルールベース生成（オフライン動作）</span>';
 }
 
@@ -1652,14 +1602,13 @@ async function generateDoc(kind){
 const LENSES=[
   {id:"plan",jp:"制作向け",en:"PLAN",ic:"pen",doc:"運用計画書"},
   {id:"live",jp:"現場向け",en:"ONSITE",ic:"hard-hat",doc:"現場指示"},
-  {id:"visitor",jp:"来場者向け",en:"VISITOR",ic:"smartphone",doc:"アナウンス文"},
-  {id:"judge",jp:"審査向け",en:"JUDGE",ic:"award",doc:"審査用サマリー"}
+  {id:"visitor",jp:"来場者向け",en:"VISITOR",ic:"smartphone",doc:"アナウンス文"}
 ];
 function setView(v){
   if(PLAY.on) stopPlay();
   S.view=v;
   $("#btnExport").style.display = (v==="plan") ? "flex" : "none";
-  $("#btnGen").style.display = (v==="judge") ? "none" : "flex";
+  $("#btnGen").style.display = "flex";
   document.querySelectorAll(".view").forEach(el=>el.classList.toggle("on",el.id==="view-"+v));
   document.querySelectorAll("#lens button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   $("#genSub").textContent=LENSES.find(l=>l.id===v).doc;
@@ -1685,10 +1634,9 @@ function outSync(){
 }
 function update(){
   recompute(); outSync(); renderCtx();
-  if(S.view==="plan"){ renderPlan(); drawMap(); drawSunTrack(); renderHourly(); }
-  if(S.view==="live"){ renderLive(); drawTimeline("#tlchartLive",{now:true}); }
+  if(S.view==="plan"){ renderPlan(); drawMap(); drawSunTrack(); renderHourly(); renderODWidget(); }
+  if(S.view==="live"){ renderLive(); drawTimeline("#tlchartLive",{now:true}); renderStaffMap(); }
   if(S.view==="visitor") renderVisitor();
-  if(S.view==="judge") renderJudge();
 }
 function toast(m){
   const t=$("#toast"); t.textContent=m; t.classList.add("on");
@@ -1731,6 +1679,13 @@ function init(){
   window.addEventListener("beforeprint",()=>{ if(SERIES&&STAFF) buildPrintDoc(); });
   /* 会場図アップロード（今後実装） */
   $("#venueSoon").addEventListener("click",()=>toast("会場図アップロードは今後実装予定です（図面PDF→初期モデル自動生成）"));
+  /* 実測・過去気象の反映（Open-Meteo / Historical Weather） */
+  $("#pastFetch").addEventListener("click",()=>fetchPast($("#dateIn").value||S.date));
+  $("#pastLastYear").addEventListener("click",()=>fetchPast(shiftYear($("#dateIn").value||S.date,-1)));
+  $("#pastTwoYears").addEventListener("click",()=>fetchPast(shiftYear($("#dateIn").value||S.date,-2)));
+  /* 東京都オープンデータ（都営給水スポット） */
+  $("#odReload").addEventListener("click",()=>fetchStationsOD(true));
+  setTimeout(()=>fetchStationsOD(false),400);
   $("#docClose").addEventListener("click",()=>$("#shade").classList.remove("on"));
   $("#shade").addEventListener("click",e=>{if(e.target.id==="shade")$("#shade").classList.remove("on");});
   $("#docRegen").addEventListener("click",()=>generateDoc(lastDocKind));
@@ -1740,15 +1695,294 @@ function init(){
   });
   document.addEventListener("keydown",e=>{
     if(e.key==="Escape")$("#shade").classList.remove("on");
-    if(["1","2","3","4"].includes(e.key)&&!/input|textarea/i.test(document.activeElement.tagName)) setView(LENSES[+e.key-1].id);
+    if(["1","2","3"].includes(e.key)&&!/input|textarea/i.test(document.activeElement.tagName)) setView(LENSES[+e.key-1].id);
   });
-  window.addEventListener("resize",()=>{ if(S.view==="plan"){drawMap();drawSunTrack();} if(S.view==="live")drawTimeline("#tlchartLive",{now:true}); });
+  window.addEventListener("resize",()=>{ if(S.view==="plan"){drawMap();drawSunTrack();} if(S.view==="live"){drawTimeline("#tlchartLive",{now:true});renderStaffMap();} });
   /* deep link */
   const q=new URLSearchParams(location.search).get("view");
   const v=LENSES.some(l=>l.id===q)?q:"plan";
   recompute(); syncInputs(); tlLegend(); setView(v);
 }
 document.addEventListener("DOMContentLoaded",init);
+</script>
+<script>
+"use strict";
+/* ============================================================
+   v5.1 EXTENSIONS
+   ── ①過去・実測気象の再現（Open-Meteo / Historical Weather API）
+   ── ②東京都オープンデータ連携（都営給水スポット / CKAN API）
+   ── ③スタッフ最適配置マップ（現場向け）
+   ============================================================ */
+
+/* ---------- 日付ユーティリティ ---------- */
+function shiftYear(dateStr,dy){
+  const p=(dateStr||"").split("-").map(Number);
+  if(p.length!==3||!p[0]) return dateStr;
+  let d=p[2]; if(p[1]===2&&d===29) d=28;
+  return (p[0]+dy)+"-"+String(p[1]).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+}
+function todayJST(){
+  const n=new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Tokyo"}));
+  return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0");
+}
+
+/* ---------- ①実測・過去の気象を反映 ---------- */
+async function fetchPast(dateStr){
+  const btn=$("#pastFetch"); if(btn) btn.disabled=true;
+  const note=$("#pastNote");
+  try{
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(dateStr||"")) throw new Error("bad date");
+    const diffDays=Math.round((new Date(dateStr+"T00:00:00+09:00")-new Date(todayJST()+"T00:00:00+09:00"))/86400000);
+    if(diffDays>16){ toast("先の日付は16日先の予報まで。それ以降は手動シナリオで設定してください"); return; }
+    const base=diffDays<=-6?"https://archive-api.open-meteo.com/v1/archive":"https://api.open-meteo.com/v1/forecast";
+    const url=base+"?latitude="+LAT+"&longitude="+LON+"&start_date="+dateStr+"&end_date="+dateStr
+      +"&hourly=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia%2FTokyo";
+    const r=await fetch(url,{signal:AbortSignal.timeout(12000)});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const H=(await r.json()).hourly||{};
+    const times=H.time||[];
+    const idx=[]; times.forEach((tm,i)=>{
+      const hh=parseInt(tm.slice(11,13),10);
+      if(hh>=OPEN&&hh<=CLOSE&&H.temperature_2m&&H.temperature_2m[i]!=null) idx.push(i);
+    });
+    if(!idx.length) throw new Error("no data");
+    let hi=idx[0];
+    idx.forEach(i=>{ if(H.temperature_2m[i]>H.temperature_2m[hi]) hi=i; });
+    const hiT=H.temperature_2m[hi];
+    const hum=(H.relative_humidity_2m||[])[hi];
+    const wind=(H.wind_speed_10m||[])[hi];
+    const wxOf=c=>c<=1?"sunny":(c<=3||c===45||c===48)?"cloudy":"rainy";
+    const cnt={sunny:0,cloudy:0,rainy:0};
+    idx.forEach(i=>{const c=(H.weather_code||[])[i]; if(c!=null) cnt[wxOf(c)]++;});
+    S.wx=cnt.rainy>=2?"rainy":(cnt.sunny>=cnt.cloudy?"sunny":"cloudy");
+    S.temp=clamp(hiT,24,40);
+    if(hum!=null) S.hum=clamp(hum,30,95);
+    if(wind!=null) S.wind=clamp(wind/3.6,0,8);
+    S.date=dateStr;
+    S.hour=clamp(parseInt(times[hi].slice(11,13),10),OPEN,CLOSE);
+    const isPast=diffDays<0;
+    const chip=$("#livechip");
+    if(chip){ chip.classList.remove("err"); chip.style.display="inline-flex"; $("#livechipTxt").textContent=(isPast?"REPLAY ":"FORECAST ")+dateStr; }
+    if(note){
+      note.style.display="block";
+      note.innerHTML="<b>"+esc(dateStr)+"</b> ── 開場〜終演の"+(isPast?"実測値":"予報値")+"を反映: 最高 "+f1(hiT)+"°C（"+parseInt(times[hi].slice(11,13),10)+"時）・湿度"+Math.round(S.hum)+"%・"+WXLABEL[S.wx]
+        +"<br>出典: "+(diffDays<=-6?"Open-Meteo Historical Weather API (ERA5)":"Open-Meteo Forecast API")+" ── 太陽位置・影・WBGTも日付連動で再計算";
+    }
+    syncInputs(); update();
+    toast(isPast?"過去の気象を再現しました（"+dateStr+"）":"気象を反映しました（"+dateStr+"）");
+  }catch(e){
+    toast("気象データを取得できませんでした（対象期間外またはネットワーク）");
+  }finally{ if(btn) btn.disabled=false; }
+}
+
+/* ---------- ②東京都オープンデータ ── 都営給水スポット ---------- */
+let ODDATA=null,ODBUSY=false,ODLAST=null;
+async function fetchStationsOD(force){
+  if(ODBUSY||(ODDATA&&ODDATA.ok&&!force)){ renderODWidget(); return; }
+  ODBUSY=true;
+  const list=$("#odList");
+  if(list) list.innerHTML='<div class="note mono">東京都オープンデータカタログ（CKAN API）から取得中…</div>';
+  try{
+    const r=await fetch("/api/opendata?lat="+LAT+"&lon="+LON+"&radius=6&limit=10",{signal:AbortSignal.timeout(15000)});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    ODDATA=await r.json();
+  }catch(e){ ODDATA={ok:false}; }
+  ODBUSY=false; ODLAST=null;
+  renderODWidget();
+  if(S.view==="visitor") renderVisitor();
+}
+function odVisitorRow(){
+  if(!ODDATA||!ODDATA.ok||!(ODDATA.stations||[]).length) return "";
+  const near=ODDATA.stations.slice(0,2);
+  return '<div style="display:flex;gap:9px">'+ic("droplet",14,'style="color:var(--ok);flex:none;margin-top:2px"')
+    +'<span><b>都営給水スポット（行き帰り）</b> ── '+near.map(s=>esc(s.name)+"（"+f1(s.distKm)+"km）").join("・")
+    +' <span style="color:var(--t3);font-size:10px">出典: 東京都水道局</span></span></div>';
+}
+function deg16(b){
+  const names=["北","北北東","北東","東北東","東","東南東","南東","南南東","南","南南西","南西","西南西","西","西北西","北西","北北西"];
+  return names[Math.round((((b%360)+360)%360)/22.5)%16];
+}
+function renderODWidget(){
+  const list=$("#odList"), map=$("#odMap"), meta=$("#odMeta");
+  if(!list||!map||!ODDATA||ODLAST===ODDATA) return;
+  ODLAST=ODDATA;
+  if(!ODDATA.ok||!(ODDATA.stations||[]).length){
+    list.innerHTML='<div class="note">給水スポットを取得できませんでした。「再取得」をお試しください（デプロイ環境では自動で動作します）。</div>';
+    map.innerHTML=""; return;
+  }
+  const st=ODDATA.stations;
+  const R=150, rings=[2,4,6], rmax=6;
+  let s='<circle cx="0" cy="0" r="4" fill="var(--sky)"/><text x="0" y="16" text-anchor="middle" style="font:600 9px var(--mono);fill:var(--sky2)">会場</text>';
+  rings.forEach(km=>{
+    const rr2=km/rmax*(R-18);
+    s+='<circle cx="0" cy="0" r="'+rr2+'" fill="none" stroke="var(--line)" stroke-dasharray="3 4"/>'
+     +'<text x="4" y="'+(-rr2-3)+'" style="font:9px var(--mono);fill:var(--t3)">'+km+'km</text>';
+  });
+  [["N",0,-1],["S",0,1],["W",-1,0],["E",1,0]].forEach(d=>{
+    s+='<text x="'+(d[1]*(R-8))+'" y="'+(d[2]*(R-8)+3)+'" text-anchor="middle" style="font:9px var(--mono);fill:var(--t3)">'+d[0]+'</text>';
+  });
+  st.forEach((p,i)=>{
+    const rr2=Math.min(p.distKm,rmax)/rmax*(R-18);
+    const a=(p.bearing-90)*Math.PI/180;
+    const x=rr2*Math.cos(a), y=rr2*Math.sin(a);
+    s+='<g><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="5.5" fill="rgba(52,211,153,.22)" stroke="var(--ok)"/>'
+     +'<text x="'+x.toFixed(1)+'" y="'+(y+2.8).toFixed(1)+'" text-anchor="middle" style="font:600 7.5px var(--mono);fill:var(--ok)">'+(i+1)+'</text></g>';
+  });
+  map.setAttribute("viewBox","-"+R+" -"+R+" "+(R*2)+" "+(R*2));
+  map.innerHTML=s;
+  list.innerHTML=st.map((p,i)=>
+    '<div class="odrow"><span class="odn">'+(i+1)+'</span>'
+    +'<div class="odbody"><div class="odname">'+esc(p.name)+'</div>'
+    +'<div class="odsub">'+esc(p.addr||"")+(p.hours?' ── '+esc(p.hours):'')+'</div></div>'
+    +'<div class="oddist"><b>'+f1(p.distKm)+'</b>km<span>'+deg16(p.bearing)+'</span></div></div>').join("");
+  if(meta){
+    const d=ODDATA.dataset||{};
+    meta.innerHTML='出典: '+esc(d.publisher||"東京都水道局")+'「'+esc(d.title||"Tokyowater Drinking Station 一覧")+'」（'+esc(d.license||"CC BY 4.0")+'）── '
+      +(ODDATA.live?'東京都オープンデータカタログ CKAN APIからライブ取得':'<span style="color:var(--warn)">オフライン: 内蔵キャッシュを表示中</span>')
+      +' ／ 都内全'+fmt(ODDATA.totalInTokyo||0)+'カ所中・会場'+(ODDATA.radiusKm||6)+'km圏 '+(ODDATA.count||st.length)+'カ所を表示';
+  }
+}
+
+/* ---------- ③スタッフ最適配置マップ ---------- */
+const STF_ROLE={
+  sec:  {label:"警備",  color:"#F87171"},
+  guide:{label:"誘導",  color:"#7DD3FC"},
+  gate: {label:"ゲート",color:"#38BDF8"},
+  medic:{label:"救護",  color:"#34D399"}
+};
+function staffSnapshot(){
+  const hh=Math.round(clamp(S.hour,OPEN,CLOSE));
+  const row=STAFF.hourly.find(x=>x.h===hh)||STAFF.hourly[STAFF.hourly.length-1];
+  const p=snap();
+  const zones=p.zones.map(z=>({id:z.id,n:z.n,dl:z.dl,hr:z.hr,people:z.people,
+    sec:z.people>=80?Math.ceil(z.people/SEC_RATIO[z.dl]):0}));
+  return {row,zones,p,hh};
+}
+function dotsInRect(z0,n,margin){
+  const pts=[]; if(n<=0) return pts;
+  const m=margin==null?6:margin;
+  const w=Math.max(z0.w-m*2,2), h=Math.max(z0.h-m*2,2);
+  const cols=Math.max(1,Math.round(Math.sqrt(n*w/Math.max(h,1))));
+  const rows=Math.ceil(n/cols);
+  for(let i=0;i<n;i++){
+    const c=i%cols, r=Math.floor(i/cols);
+    pts.push([z0.x+m+(cols===1?w/2:c*(w/(cols-1))), z0.y+m+(rows===1?h/2:r*(h/(rows-1)))]);
+  }
+  return pts;
+}
+function renderStaffMap(){
+  const cv=$("#staffMap"); if(!cv||!STAFF) return;
+  const st=staffSnapshot();
+  const ctx=cv.getContext("2d");
+  const dpr=window.devicePixelRatio||1;
+  const cssW=cv.clientWidth||720, cssH=cssW*(470/720);
+  cv.width=cssW*dpr; cv.height=cssH*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const pad=18, sx=(cssW-pad*2)/MAPW, sy=(cssH-pad*2-14)/MAPH;
+  const X=x=>pad+x*sx, Y=y=>pad+y*sy;
+  ctx.clearRect(0,0,cssW,cssH);
+  ctx.fillStyle="#0B1222"; ctx.fillRect(X(0),Y(0),MAPW*sx,MAPH*sy);
+  ctx.strokeStyle="#1B2946"; ctx.lineWidth=1;
+  for(let gx=0;gx<=MAPW;gx+=20){ctx.beginPath();ctx.moveTo(X(gx),Y(0));ctx.lineTo(X(gx),Y(MAPH));ctx.stroke();}
+  for(let gy=0;gy<=MAPH;gy+=20){ctx.beginPath();ctx.moveTo(X(0),Y(gy));ctx.lineTo(X(MAPW),Y(gy));ctx.stroke();}
+  for(const b of BUILDINGS){
+    ctx.fillStyle="#121B31"; ctx.strokeStyle="#2A3B63";
+    ctx.fillRect(X(b.x),Y(b.y),b.w*sx,b.h*sy); ctx.strokeRect(X(b.x),Y(b.y),b.w*sx,b.h*sy);
+  }
+  for(const z0 of ZONES){
+    const z=st.zones.find(q=>q.id===z0.id);
+    ctx.strokeStyle=z.dl>=2?DCOL[z.dl]:"#2E4270"; ctx.lineWidth=z.dl>=2?1.5:1;
+    rr(ctx,X(z0.x),Y(z0.y),z0.w*sx,z0.h*sy,7); ctx.stroke();
+    ctx.fillStyle="rgba(234,241,252,.85)"; ctx.font="600 10px 'Noto Sans JP',sans-serif";
+    ctx.fillText(z0.n,X(z0.x)+6,Y(z0.y)+13);
+  }
+  const drawDot=(x,y,color,label)=>{
+    ctx.beginPath(); ctx.arc(X(x),Y(y),5,0,Math.PI*2);
+    ctx.fillStyle=color; ctx.globalAlpha=.92; ctx.fill(); ctx.globalAlpha=1;
+    ctx.lineWidth=1.2; ctx.strokeStyle="rgba(6,10,20,.9)"; ctx.stroke();
+    if(label){
+      ctx.fillStyle="#06101E"; ctx.font="700 6.5px 'IBM Plex Mono',monospace";
+      ctx.textAlign="center"; ctx.fillText(label,X(x),Y(y)+2.4); ctx.textAlign="left";
+    }
+  };
+  const badge=(z0,txt,color)=>{
+    ctx.font="600 9px 'IBM Plex Mono',monospace";
+    const w=ctx.measureText(txt).width+10;
+    const bx=X(z0.x+z0.w)-w-3, by=Y(z0.y+z0.h)-15;
+    ctx.fillStyle="rgba(6,10,20,.8)";
+    rr(ctx,bx,by,w,12,6); ctx.fill();
+    ctx.strokeStyle=color; ctx.lineWidth=1; rr(ctx,bx,by,w,12,6); ctx.stroke();
+    ctx.fillStyle=color; ctx.fillText(txt,bx+5,by+9.5);
+  };
+  /* 警備 ── ゾーン滞留人数に比例（SEC_RATIO） */
+  let secTot=0;
+  for(const z of st.zones){
+    if(!z.sec) continue;
+    secTot+=z.sec;
+    const z0=ZONES.find(q=>q.id===z.id);
+    dotsInRect(z0,Math.min(z.sec,14),7).forEach(pt=>drawDot(pt[0],pt[1],STF_ROLE.sec.color));
+    badge(z0,"警備×"+z.sec,STF_ROLE.sec.color);
+  }
+  /* 誘導 ── 基本2名は中央プロムナード、混雑ゾーン(dl>=2)へ各1名 */
+  const hotZones=st.zones.filter(z=>z.dl>=2);
+  const prom=ZONES.find(z=>z.id==="prom");
+  let guideLeft=st.row.guide;
+  const promN=Math.min(2,guideLeft);
+  dotsInRect(prom,promN,9).forEach(pt=>drawDot(pt[0],pt[1],STF_ROLE.guide.color,"誘"));
+  guideLeft-=promN;
+  for(const z of hotZones){
+    if(guideLeft<=0) break;
+    const z0=ZONES.find(q=>q.id===z.id);
+    drawDot(z0.x+5,z0.y+z0.h/2,STF_ROLE.guide.color,"誘"); guideLeft--;
+  }
+  /* ゲート ── 東西ゲートに滞留比で配分 */
+  const wgS=st.zones.find(z=>z.id==="wgate"), egS=st.zones.find(z=>z.id==="egate");
+  const gTot=Math.max(1,wgS.people+egS.people);
+  const eN=clamp(Math.round(st.row.gate*egS.people/gTot),0,st.row.gate);
+  const wN=st.row.gate-eN;
+  const wz=ZONES.find(z=>z.id==="wgate"), ez=ZONES.find(z=>z.id==="egate");
+  dotsInRect(wz,Math.min(wN,8),8).forEach(pt=>drawDot(pt[0],pt[1],STF_ROLE.gate.color,"G"));
+  dotsInRect(ez,Math.min(eN,8),8).forEach(pt=>drawDot(pt[0],pt[1],STF_ROLE.gate.color,"G"));
+  if(wN) badge(wz,"ゲート×"+wN,STF_ROLE.gate.color);
+  if(eN) badge(ez,"ゲート×"+eN,STF_ROLE.gate.color);
+  /* 救護 ── 芝生広場（救護テント）。WBGT厳重警戒以上はフードコートへ分駐 */
+  const lawn=ZONES.find(z=>z.id==="lawn"), food=ZONES.find(z=>z.id==="food");
+  const hrMax=Math.max(...st.zones.map(z=>z.hr));
+  const mSplit=(hrMax>=2&&st.row.medic>=3)?Math.floor(st.row.medic/3):0;
+  dotsInRect(lawn,Math.min(st.row.medic-mSplit,8),10).forEach(pt=>drawDot(pt[0],pt[1],STF_ROLE.medic.color,"救"));
+  if(mSplit) dotsInRect(food,mSplit,10).forEach(pt=>drawDot(pt[0],pt[1],STF_ROLE.medic.color,"救"));
+  badge(lawn,"救護×"+(st.row.medic-mSplit),STF_ROLE.medic.color);
+  if(mSplit) badge(food,"救護×"+mSplit,STF_ROLE.medic.color);
+
+  const sub=$("#staffSub"); if(sub) sub.textContent=hhmm(S.hour)+" 時点 ── 時間スクラバー・再生に連動";
+  const lg=$("#staffLegend");
+  if(lg) lg.innerHTML=Object.values(STF_ROLE).map(r=>'<span><i style="background:'+r.color+'"></i>'+r.label+'</span>').join("");
+  const sm=$("#staffSummary");
+  if(sm){
+    sm.innerHTML=
+      '<div class="stf-kv"><span>'+st.hh+':00台の必要人員（算出値）</span><b>'+(st.row.ops+secTot)+'名</b></div>'
+      +'<div class="stf-row"><i style="background:'+STF_ROLE.sec.color+'"></i>警備 ── ゾーン滞留比例 <b>'+secTot+'</b></div>'
+      +'<div class="stf-row"><i style="background:'+STF_ROLE.gate.color+'"></i>ゲート ── 流量 '+fmt(st.row.flowPH)+'人/時 <b>'+st.row.gate+'</b></div>'
+      +'<div class="stf-row"><i style="background:'+STF_ROLE.guide.color+'"></i>誘導 ── 混雑ゾーン '+hotZones.length+' <b>'+st.row.guide+'</b></div>'
+      +'<div class="stf-row"><i style="background:'+STF_ROLE.medic.color+'"></i>救護 ── WBGT '+f1(st.p.maxW)+' <b>'+st.row.medic+'</b></div>'
+      +'<div class="stf-kv" style="margin-top:10px"><span>本日の運営ピーク</span><b>'+STAFF.peakOps.h+':00 ── '+STAFF.peakOps.ops+'名＋警備</b></div>';
+  }
+  const bars=$("#staffBars");
+  if(bars){
+    const maxT=Math.max(...STAFF.hourly.map(x=>x.total));
+    bars.innerHTML='<div class="sb-title">時間帯別 必要人員 ── クリックで時刻移動</div>'
+     +'<div class="sb-row">'+STAFF.hourly.map(x=>{
+        const hpx=90;
+        const seg=(v,c)=>'<i style="height:'+Math.round(v/maxT*hpx)+'px;background:'+c+'"></i>';
+        return '<div class="sb'+(x.h===st.hh?" on":"")+'" data-h="'+x.h+'" title="'+x.h+':00 計'+x.total+'名">'
+          +'<div class="sb-col">'+seg(x.sec,STF_ROLE.sec.color)+seg(x.guide,STF_ROLE.guide.color)+seg(x.medic,STF_ROLE.medic.color)+seg(x.gate,STF_ROLE.gate.color)+'</div>'
+          +'<span>'+x.h+'</span></div>';
+      }).join("")+'</div>';
+    bars.querySelectorAll(".sb").forEach(b=>b.addEventListener("click",()=>setHour(parseInt(b.dataset.h,10))));
+  }
+  const noteEl=$("#staffNote");
+  if(noteEl) noteEl.innerHTML="配置は<b>密度区分（Fruin）× WBGT × ゲート流量</b>からの算出値。警備はゾーン滞留人数に比例（"+SEC_RATIO.join("/")+"人あたり1名）、ゲートは流量600人/時あたり1レーン、救護はWBGT区分×場内人数、誘導は基本2名＋混雑ゾーン数。<b>最終配置は有資格の警備計画者の確認を前提</b>とする（「計画書をエクスポート」に配置表を転記）。";
+}
 </script>
 </body>
 </html>
