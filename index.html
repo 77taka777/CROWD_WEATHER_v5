@@ -351,6 +351,73 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 .gmap-iw{font-family:var(--body);font-size:12px;color:#0b1220;min-width:150px}
 .gmap-iw b{display:block;font-size:12.5px;margin-bottom:2px}
 .gmap-iw span{color:#41506e;font-size:11px}
+
+/* 給水/避難 表示トグル */
+.odtoggles{display:flex;gap:8px;flex-wrap:wrap}
+.odtg{display:inline-flex;align-items:center;gap:6px;background:var(--ink1);border:1px solid var(--line);color:var(--t3);
+  font-family:var(--body);font-size:11.5px;font-weight:600;padding:7px 12px;border-radius:99px;cursor:pointer;
+  transition:border-color .15s,color .15s,background .15s}
+.odtg svg{opacity:.65}
+.odtg .tgst{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--t3)}
+.odtg .tgst::after{content:"OFF"}
+.odtg.on{color:var(--t1);background:var(--ink3)}
+.odtg.on .tgst::after{content:"ON"}
+.odtg.on svg{opacity:1}
+.odtg[data-k="water"].on{border-color:rgba(52,211,153,.55)}
+.odtg[data-k="water"].on svg{color:var(--ok)}
+.odtg[data-k="water"].on .tgst{color:var(--ok)}
+.odtg[data-k="evac"].on{border-color:rgba(251,146,60,.55)}
+.odtg[data-k="evac"].on svg{color:var(--heat)}
+.odtg[data-k="evac"].on .tgst{color:var(--heat)}
+
+/* スポット単位の有効/無効スイッチ */
+.odsw{flex:none;width:34px;height:19px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;border:0;padding:0;transition:background .15s}
+.odsw::after{content:"";position:absolute;top:2.5px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--t2);transition:transform .15s,background .15s}
+.odsw.on{background:var(--skyDeep)}
+.odsw.on::after{transform:translateX(14px);background:#fff}
+.odrow.off{opacity:.42}
+.odrow.off .odname{text-decoration:line-through;text-decoration-color:var(--t3);text-decoration-thickness:1px}
+
+/* ---- モバイル調整（600px以下） ---- */
+@media(max-width:600px){
+  .wrap{padding:0 12px}
+  .panel{padding:13px 12px}
+  .panel.tight{padding:11px 12px}
+  #cmdbar .wrap{gap:8px}
+  .brand .tag{display:none}
+  .brand .name{font-size:15px}
+  .lens button{padding:7px 5px;font-size:10.5px;gap:4px}
+  .lens .en{display:none}
+  .abtn{padding:8px 9px;font-size:11.5px;gap:6px}
+  .abtn .sub{display:none}
+  .kpis,.kpis.k3{grid-template-columns:1fr 1fr;gap:8px}
+  .kpi{padding:11px 12px}
+  .kpi .val{font-size:20px}
+  .ptitle{font-size:14px}
+  .ptitle small{display:block;margin-left:0;margin-top:3px;line-height:1.5}
+  .hf-head{align-items:flex-start}
+  .hf-tools{width:100%;justify-content:flex-start;flex-wrap:wrap;gap:8px}
+  .daterow input[type=date]{min-width:120px}
+  .pastrow{gap:6px}
+  .pastbtn{font-size:11px;padding:8px 10px}
+  .pastchip{font-size:9px;padding:6px 8px}
+  #odGmap{height:280px}
+  .odrow{padding:7px 9px;gap:8px}
+  .odrow .odname{white-space:normal}
+  .oddist{min-width:52px}
+  .suninfo{margin-left:0;width:100%}
+  .maptools{gap:6px}
+  .tablet{padding:8px;border-radius:18px}
+  .tablet-screen{padding:9px;border-radius:12px}
+  .tablet-bar{font-size:9.5px;padding:2px 4px 8px}
+  .tablet-bar .tb-l b{font-size:11px}
+  .g-staff{gap:12px}
+  .phone{width:100%;border-radius:26px}
+  footer.site .sp{font-size:9px;letter-spacing:.04em}
+  #docmodal{border-radius:12px}
+  #docbody{padding:14px 14px;font-size:11.5px}
+  .legend{gap:9px;font-size:9.5px}
+}
 .odlist{display:grid;gap:8px}
 .odrow{display:flex;gap:10px;align-items:center;background:var(--ink2);border:1px solid var(--line);border-radius:var(--rs);padding:8px 12px}
 .odrow .odn{flex:none;width:20px;height:20px;border-radius:99px;background:rgba(52,211,153,.14);border:1px solid var(--ok);color:var(--ok);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center}
@@ -499,10 +566,10 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
       <div class="hf-head">
         <div>
           <div class="eyebrow"><span data-ic="database"></span>TOKYO OPEN DATA ── 会場周辺インフラ</div>
-          <div class="ptitle" style="margin-bottom:0" id="odTitle">会場周辺の給水スポット<small id="odTitleSub">東京都水道局「Tokyowater Drinking Station 一覧」をAPIでライブ取得</small></div>
+          <div class="ptitle" style="margin-bottom:0" id="odTitle">会場周辺の給水・避難スポット<small id="odTitleSub">東京都オープンデータをAPIで取得 ── 表示ON/OFF切替・最寄りへの道順つき</small></div>
         </div>
         <div class="hf-tools">
-          <div class="seg" id="odSeg" style="max-width:230px"></div>
+          <div class="odtoggles" id="odToggles"></div>
           <button class="playbtn" id="odReload"><span data-ic="refresh"></span><span>再取得</span></button>
         </div>
       </div>
@@ -1383,7 +1450,11 @@ function renderVisitor(){
     +'<div style="display:flex;gap:9px">'+ic("map-pin",14,'style="color:var(--sky);flex:none;margin-top:2px"')+'<span><b>日陰ルート</b> ── '+(shady.length?shady.map(z=>esc(z.n)).join("→")+' 経由が日陰率高め':"夕方以降は全域で快適")+'</span></div>'
     +'<div style="display:flex;gap:9px">'+ic("droplet",14,'style="color:var(--sky2);flex:none;margin-top:2px"')+'<span><b>クールスポット</b> ── フードコート屋根下／ミスト（芝生広場）</span></div>'
     +odVisitorRow()
-    +'</div></div>';
+    +'</div></div>'
+    +'<div class="pcard"><div class="cl">'+ic("map-pin",11)+'付近の給水・避難マップ</div>'
+    +'<div id="vMapSlot"></div>'
+    +'<div class="legend" style="margin-top:8px;font-size:9.5px"><span><i style="background:#34D399"></i>給水スポット</span><span><i style="background:#FB923C"></i>避難場所</span><span><i style="background:#38BDF8"></i>会場</span></div></div>';
+  renderVisitorMap();
   $("#pnav").innerHTML=
     '<div class="on">'+ic("activity",15)+'予報</div><div>'+ic("map-pin",15)+'マップ</div><div>'+ic("bell",15)+'通知</div>';
 }
@@ -1641,7 +1712,7 @@ async function generateDoc(kind){
 const LENSES=[
   {id:"plan",jp:"主催（PC）",en:"HOST · PC",ic:"pen",doc:"運用計画書"},
   {id:"visitor",jp:"来場者向け（モバイル）",en:"VISITOR · MOBILE",ic:"smartphone",doc:"アナウンス文"},
-  {id:"live",jp:"現場向け（タブレット）",en:"ONSITE · TABLET",ic:"hard-hat",doc:"現場指示"}
+  {id:"live",jp:"現場スタッフ向け（タブレット）",en:"ONSITE · TABLET",ic:"hard-hat",doc:"現場指示"}
 ];
 function setView(v){
   if(PLAY.on) stopPlay();
@@ -1723,14 +1794,13 @@ function init(){
   $("#pastFetch").addEventListener("click",()=>fetchPast(EVENTDATE||$("#dateIn").value||S.date));
   $("#pastLastYear").addEventListener("click",()=>fetchPast(shiftYear(EVENTDATE||S.date,-1)));
   $("#pastTwoYears").addEventListener("click",()=>fetchPast(shiftYear(EVENTDATE||S.date,-2)));
-  /* 東京都オープンデータ（給水スポット / 避難場所） */
-  $("#odSeg").innerHTML=Object.keys(OD_KINDS).map(k=>
-    '<button data-k="'+k+'"'+(k===ODKIND?' class="on"':'')+'>'+ic(OD_KINDS[k].ic,13)+OD_KINDS[k].jp+'</button>').join("");
-  document.querySelectorAll("#odSeg button").forEach(b=>b.addEventListener("click",()=>setODKind(b.dataset.k)));
-  $("#odReload").addEventListener("click",()=>fetchStationsOD(true));
-  setTimeout(()=>fetchStationsOD(false),400);
-  /* 避難場所は来場者ビューの案内用にバックグラウンドで先読み（パネル表示は変えない） */
-  setTimeout(()=>prefetchOD("evac"),1200);
+  /* 東京都オープンデータ（給水スポット / 避難場所） ── 表示ON/OFFトグル */
+  $("#odToggles").innerHTML=Object.keys(OD_KINDS).map(k=>
+    '<button class="odtg'+(ODSHOW[k]?' on':'')+'" data-k="'+k+'" type="button">'+ic(OD_KINDS[k].ic,13)+OD_KINDS[k].jp+'<span class="tgst"></span></button>').join("");
+  document.querySelectorAll("#odToggles .odtg").forEach(b=>b.addEventListener("click",()=>odToggle(b.dataset.k)));
+  $("#odReload").addEventListener("click",odReloadAll);
+  setTimeout(()=>fetchStationsOD("water",false),400);
+  setTimeout(()=>fetchStationsOD("evac",false),900);
   $("#docClose").addEventListener("click",()=>$("#shade").classList.remove("on"));
   $("#shade").addEventListener("click",e=>{if(e.target.id==="shade")$("#shade").classList.remove("on");});
   $("#docRegen").addEventListener("click",()=>generateDoc(lastDocKind));
@@ -1833,64 +1903,68 @@ async function fetchPast(dateStr){
 
 /* ---------- ②東京都オープンデータ ── 給水スポット / 避難場所 ---------- */
 const OD_KINDS={
-  water:{jp:"給水スポット", ic:"droplet", color:"var(--ok)", nodeFill:"rgba(52,211,153,.22)", markerColor:"#34D399",
-         title:"会場周辺の給水スポット", sub:"東京都水道局「Tokyowater Drinking Station 一覧」をAPIでライブ取得",
-         unit:"カ所"},
-  evac: {jp:"避難場所", ic:"shield", color:"var(--heat)", nodeFill:"rgba(251,146,60,.20)", markerColor:"#FB923C",
-         title:"会場周辺の避難場所（災害時）", sub:"東京都オープンデータ「指定緊急避難場所」をAPIで取得（会場からの避難方向つき）",
-         unit:"カ所"}
+  water:{jp:"給水スポット", ic:"droplet", color:"var(--ok)", nodeFill:"rgba(52,211,153,.22)", markerColor:"#34D399"},
+  evac: {jp:"避難場所", ic:"shield", color:"var(--heat)", nodeFill:"rgba(251,146,60,.20)", markerColor:"#FB923C"}
 };
-let ODKIND="water";
+const ODSHOW={water:true,evac:true};      /* 主催画面の表示ON/OFF */
 const OD={water:null,evac:null}, ODBUSY={water:false,evac:false};
-let ODLAST=null;
-async function fetchStationsOD(force){
-  const kind=ODKIND;
-  if(ODBUSY[kind]||(OD[kind]&&OD[kind].ok&&!force)){ ODLAST=null; renderODWidget(); return; }
-  ODBUSY[kind]=true;
-  const list=$("#odList");
-  if(list&&kind===ODKIND) list.innerHTML='<div class="note mono">東京都オープンデータからAPI取得中…</div>';
-  try{
-    const r=await fetch("/api/opendata?kind="+kind+"&lat="+LAT+"&lon="+LON+"&radius=6&limit=6",{signal:AbortSignal.timeout(15000)});
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    OD[kind]=await r.json();
-  }catch(e){ OD[kind]={ok:false}; }
-  ODBUSY[kind]=false; ODLAST=null;
-  renderODWidget();
-  if(S.view==="visitor") renderVisitor();
-}
-async function prefetchOD(kind){
-  if(ODBUSY[kind]||(OD[kind]&&OD[kind].ok)) { if(S.view==="visitor") renderVisitor(); return; }
+let ODSIG=null;                            /* 再描画スキップ用の署名 */
+async function fetchStationsOD(kind,force){
+  if(!OD_KINDS[kind]) return;
+  if(ODBUSY[kind]||(OD[kind]&&OD[kind].ok&&!force)){ renderODWidget(); return; }
   ODBUSY[kind]=true;
   try{
     const r=await fetch("/api/opendata?kind="+kind+"&lat="+LAT+"&lon="+LON+"&radius=6&limit=6",{signal:AbortSignal.timeout(15000)});
     OD[kind]=r.ok?await r.json():{ok:false};
   }catch(e){ OD[kind]={ok:false}; }
-  ODBUSY[kind]=false;
-  if(kind===ODKIND){ ODLAST=null; renderODWidget(); }
+  ODBUSY[kind]=false; ODSIG=null;
+  renderODWidget();
   if(S.view==="visitor") renderVisitor();
 }
-function setODKind(k){
-  if(!OD_KINDS[k]||k===ODKIND){ return; }
-  ODKIND=k; ODLAST=null;
-  document.querySelectorAll("#odSeg button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
-  const cfg=OD_KINDS[k];
-  const t=$("#odTitle"); if(t) t.innerHTML=cfg.title+'<small id="odTitleSub">'+cfg.sub+'</small>';
-  fetchStationsOD(false);
+function odReloadAll(){ fetchStationsOD("water",true); fetchStationsOD("evac",true); }
+function odToggle(k){
+  ODSHOW[k]=!ODSHOW[k]; ODSIG=null;
+  const b=document.querySelector('#odToggles .odtg[data-k="'+k+'"]');
+  if(b) b.classList.toggle("on",ODSHOW[k]);
+  if(ODSHOW[k]&&!(OD[k]&&OD[k].ok)) fetchStationsOD(k,false);
+  renderODWidget();
 }
+function odAll(){ /* 取得済み全スポット（種別タグつき・近い順） */
+  const out=[];
+  ["water","evac"].forEach(k=>{
+    (((OD[k]&&OD[k].ok)?OD[k].stations:null)||[]).forEach(p=>out.push(Object.assign({k:k},p)));
+  });
+  out.sort((a,b)=>a.distKm-b.distKm);
+  return out;
+}
+function odMerged(){ return odAll().filter(p=>ODSHOW[p.k]); }
+
+/* ---- スポット単位の有効/無効（有効のみ来場者画面に反映） ---- */
+const ODOFF=new Set();
+try{ (JSON.parse(localStorage.getItem("cw_odoff_v1")||"[]")||[]).forEach(k=>ODOFF.add(k)); }catch(e){}
+function odKey(p){ return p.k+"|"+p.name; }
+function odSaveSel(){ try{ localStorage.setItem("cw_odoff_v1",JSON.stringify(Array.from(ODOFF))); }catch(e){} }
+function odSpotToggle(key){
+  if(ODOFF.has(key)) ODOFF.delete(key); else ODOFF.add(key);
+  odSaveSel(); ODSIG=null;
+  renderODWidget();
+  if(S.view==="visitor") renderVisitor();
+}
+function odEnabledAll(){ return odAll().filter(p=>!ODOFF.has(odKey(p))); }
+
 function odVisitorRow(){
   let html="";
-  const w=OD.water;
-  if(w&&w.ok&&(w.stations||[]).length){
-    const near=w.stations.slice(0,2);
+  const en=odEnabledAll();
+  const w=en.filter(p=>p.k==="water").slice(0,2);
+  if(w.length){
     html+='<div style="display:flex;gap:9px">'+ic("droplet",14,'style="color:var(--ok);flex:none;margin-top:2px"')
-      +'<span><b>給水スポット（行き帰り）</b> ── '+near.map(s=>esc(s.name)+"（"+f1(s.distKm)+"km）").join("・")
+      +'<span><b>給水スポット（行き帰り）</b> ── '+w.map(s=>esc(s.name)+"（"+f1(s.distKm)+"km）").join("・")
       +' <span style="color:var(--t3);font-size:10px">出典: 東京都水道局</span></span></div>';
   }
-  const e=OD.evac;
-  if(e&&e.ok&&(e.stations||[]).length){
-    const n=e.stations[0];
+  const e=en.find(p=>p.k==="evac");
+  if(e){
     html+='<div style="display:flex;gap:9px">'+ic("shield",14,'style="color:var(--heat);flex:none;margin-top:2px"')
-      +'<span><b>いちばん近い避難場所</b> ── '+esc(n.name)+"（"+f1(n.distKm)+"km・"+deg16(n.bearing)+"方向）"
+      +'<span><b>いちばん近い避難場所</b> ── '+esc(e.name)+"（"+f1(e.distKm)+"km・"+deg16(e.bearing)+"方向）"
       +' <span style="color:var(--t3);font-size:10px">出典: 東京都オープンデータ（指定緊急避難場所）</span></span></div>';
   }
   return html;
@@ -1901,7 +1975,8 @@ function deg16(b){
 }
 
 /* ---------- Google Maps プロット（キー設定時のみ・未設定はSVGレーダー） ---------- */
-const GM={key:undefined,loading:null,map:null,markers:[],venueMarker:null,info:null};
+const GM={key:undefined,loading:null,map:null,markers:[],venueMarker:null,info:null,router:null,routeLine:null,
+          vEl:null,vmap:null,vMarkers:[],vInfo:null};
 const GMAP_STYLE=[
   {elementType:"geometry",stylers:[{color:"#0e1626"}]},
   {elementType:"labels.text.stroke",stylers:[{color:"#0a0f1e"}]},
@@ -1935,7 +2010,37 @@ function showODMap(useGmap){
   if(svg) svg.style.display=useGmap?"none":"block";
   if(g) g.style.display=useGmap?"block":"none";
 }
-async function renderODMap(kind,st,cfg){
+function clearRoute(){
+  if(GM.router) GM.router.setMap(null);
+  if(GM.routeLine) GM.routeLine.setMap(null);
+  GM.router=null; GM.routeLine=null;
+}
+function straightRoute(dest,color){
+  GM.routeLine=new google.maps.Polyline({map:GM.map,path:[{lat:LAT,lng:LON},dest],
+    strokeColor:color,strokeOpacity:.9,strokeWeight:4,zIndex:5,
+    icons:[{icon:{path:google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale:3,strokeColor:color},offset:"100%"}]});
+}
+function drawRouteToNearest(st){
+  clearRoute();
+  const near=st.find(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon));
+  if(!near) return;
+  const color=OD_KINDS[near.k].markerColor;
+  const dest={lat:near.lat,lng:near.lon};
+  if(google.maps.DirectionsService&&google.maps.DirectionsRenderer){
+    try{
+      const ds=new google.maps.DirectionsService();
+      GM.router=new google.maps.DirectionsRenderer({map:GM.map,suppressMarkers:true,preserveViewport:true,
+        polylineOptions:{strokeColor:color,strokeOpacity:.95,strokeWeight:5,zIndex:6}});
+      ds.route({origin:{lat:LAT,lng:LON},destination:dest,travelMode:google.maps.TravelMode.WALKING},(res,status)=>{
+        if(status==="OK"&&res){ GM.router.setDirections(res); }
+        else{ if(GM.router){GM.router.setMap(null);GM.router=null;} straightRoute(dest,color); }
+      });
+      return;
+    }catch(e){ /* fall through */ }
+  }
+  straightRoute(dest,color);
+}
+async function renderODMap(st){
   const g=$("#odGmap"); if(!g){ return; }
   const key=await gmapsKey();
   if(!key){ showODMap(false); return; }
@@ -1959,61 +2064,36 @@ async function renderODMap(kind,st,cfg){
       if(!Number.isFinite(p.lat)||!Number.isFinite(p.lon)) return;
       const pos={lat:p.lat,lng:p.lon};
       const mk=new google.maps.Marker({map:GM.map,position:pos,title:p.name,
-        icon:{path:google.maps.SymbolPath.CIRCLE,scale:9,fillColor:cfg.markerColor,fillOpacity:.92,strokeColor:"#06101E",strokeWeight:1.5},
-        label:{text:String(i+1),color:"#06101E",fontSize:"10px",fontWeight:"700"}});
+        icon:{path:google.maps.SymbolPath.CIRCLE,scale:9,fillColor:OD_KINDS[p.k].markerColor,fillOpacity:.92,strokeColor:"#06101E",strokeWeight:1.5},
+        label:{text:String(p.idx||i+1),color:"#06101E",fontSize:"10px",fontWeight:"700"}});
       mk.addListener("click",()=>{
         GM.info.setContent('<div class="gmap-iw"><b>'+esc(p.name)+'</b>'
           +(p.kind?'<span>'+esc(p.kind)+'</span><br>':'')
-          +'<span>'+esc(p.addr||"")+'</span><br><span>会場から '+f1(p.distKm)+'km・'+deg16(p.bearing)+'方向</span></div>');
+          +'<span>'+esc(p.addr||"")+'</span><br><span>'+OD_KINDS[p.k].jp+' ── 会場から '+f1(p.distKm)+'km・'+deg16(p.bearing)+'方向</span></div>');
         GM.info.open(GM.map,mk);
       });
       GM.markers.push(mk); bounds.extend(pos);
     });
     if(GM.markers.length) GM.map.fitBounds(bounds,48);
-    drawRouteToNearest(st,cfg);
+    if(st.length) drawRouteToNearest(st); else clearRoute();
   }catch(e){ showODMap(false); }
-}
-/* 会場 → 最寄りスポット への道順（徒歩ルート／不可なら直線動線） */
-function clearRoute(){
-  if(GM.router) GM.router.setMap(null);
-  if(GM.routeLine) GM.routeLine.setMap(null);
-  GM.router=null; GM.routeLine=null;
-}
-function straightRoute(dest,color){
-  GM.routeLine=new google.maps.Polyline({map:GM.map,path:[{lat:LAT,lng:LON},dest],
-    strokeColor:color,strokeOpacity:.9,strokeWeight:4,zIndex:5,
-    icons:[{icon:{path:google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale:3,strokeColor:color},offset:"100%"}]});
-}
-function drawRouteToNearest(st,cfg){
-  clearRoute();
-  const near=st.find(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon));
-  if(!near) return;
-  const dest={lat:near.lat,lng:near.lon};
-  if(google.maps.DirectionsService&&google.maps.DirectionsRenderer){
-    try{
-      const ds=new google.maps.DirectionsService();
-      GM.router=new google.maps.DirectionsRenderer({map:GM.map,suppressMarkers:true,preserveViewport:true,
-        polylineOptions:{strokeColor:cfg.markerColor,strokeOpacity:.95,strokeWeight:5,zIndex:6}});
-      ds.route({origin:{lat:LAT,lng:LON},destination:dest,travelMode:google.maps.TravelMode.WALKING},(res,status)=>{
-        if(status==="OK"&&res){ GM.router.setDirections(res); }
-        else{ if(GM.router){GM.router.setMap(null);GM.router=null;} straightRoute(dest,cfg.markerColor); }
-      });
-      return;
-    }catch(e){ /* fall through */ }
-  }
-  straightRoute(dest,cfg.markerColor);
 }
 
 function renderODWidget(){
   const list=$("#odList"), map=$("#odMap"), meta=$("#odMeta");
-  const data=OD[ODKIND], cfg=OD_KINDS[ODKIND];
-  if(!list||!map||!data||ODLAST===data) return;
-  ODLAST=data;
-  if(!data.ok||!(data.stations||[]).length){
-    list.innerHTML='<div class="note">'+cfg.jp+'を取得できませんでした。「再取得」をお試しください（デプロイ環境では自動で動作します）。</div>';
+  if(!list||!map) return;
+  const sig=[ODSHOW.water?1:0,ODSHOW.evac?1:0,
+    (OD.water&&OD.water.fetchedAt)||"-",(OD.evac&&OD.evac.fetchedAt)||"-",
+    (OD.water&&OD.water.ok)?1:0,(OD.evac&&OD.evac.ok)?1:0,
+    Array.from(ODOFF).sort().join(",")].join("|");
+  if(sig===ODSIG) return;
+  ODSIG=sig;
+  const st=odMerged();
+  if(!st.length){
+    const anyOn=ODSHOW.water||ODSHOW.evac;
+    list.innerHTML='<div class="note">'+(anyOn?'スポットを取得中です。表示されない場合は「再取得」をお試しください（デプロイ環境では自動で動作します）。':'表示する項目（給水スポット／避難場所）をONにしてください。')+'</div>';
     map.innerHTML=""; showODMap(false); return;
   }
-  const st=data.stations;
   const R=150, rings=[2,4,6], rmax=6;
   let s='<circle cx="0" cy="0" r="4" fill="var(--sky)"/><text x="0" y="16" text-anchor="middle" style="font:600 9px var(--mono);fill:var(--sky2)">会場</text>';
   rings.forEach(km=>{
@@ -2024,35 +2104,112 @@ function renderODWidget(){
   [["N",0,-1],["S",0,1],["W",-1,0],["E",1,0]].forEach(d=>{
     s+='<text x="'+(d[1]*(R-8))+'" y="'+(d[2]*(R-8)+3)+'" text-anchor="middle" style="font:9px var(--mono);fill:var(--t3)">'+d[0]+'</text>';
   });
-  st.forEach((p,i)=>{
+  st.forEach((p,i)=>{ p.idx=i+1; });
+  const stEn=st.filter(p=>!ODOFF.has(odKey(p)));
+  st.forEach(p=>{
+    if(ODOFF.has(odKey(p))) return;               /* OFFのスポットはマップに描かない */
+    const cfg=OD_KINDS[p.k];
     const rr2=Math.min(p.distKm,rmax)/rmax*(R-18);
     const a=(p.bearing-90)*Math.PI/180;
     const x=rr2*Math.cos(a), y=rr2*Math.sin(a);
-    const nearest=(i===0);
-    /* 全スポットに方向の目安線、最寄り①へは太い「道順」線を強調 */
+    const nearest=(stEn.length&&p===stEn[0]);
     s+='<line x1="0" y1="0" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="'+cfg.color+'" stroke-width="'+(nearest?2.4:0.7)+'" '
      +(nearest?'':'stroke-dasharray="2 3" ')+'opacity="'+(nearest?0.95:0.38)+'"/>';
     s+='<g><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(nearest?6.5:5.5)+'" fill="'+cfg.nodeFill+'" stroke="'+cfg.color+'" stroke-width="'+(nearest?1.8:1)+'"/>'
-     +'<text x="'+x.toFixed(1)+'" y="'+(y+2.8).toFixed(1)+'" text-anchor="middle" style="font:600 7.5px var(--mono);fill:'+cfg.color+'">'+(i+1)+'</text></g>';
+     +'<text x="'+x.toFixed(1)+'" y="'+(y+2.8).toFixed(1)+'" text-anchor="middle" style="font:600 7.5px var(--mono);fill:'+cfg.color+'">'+p.idx+'</text></g>';
     if(nearest) s+='<text x="'+x.toFixed(1)+'" y="'+(y-9).toFixed(1)+'" text-anchor="middle" style="font:600 8px var(--mono);fill:'+cfg.color+'">最寄り</text>';
   });
   map.setAttribute("viewBox","-"+R+" -"+R+" "+(R*2)+" "+(R*2));
   map.innerHTML=s;
-  renderODMap(ODKIND,st,cfg);
-  list.innerHTML=st.map((p,i)=>
-    '<div class="odrow"><span class="odn" style="background:'+cfg.nodeFill+';border-color:'+cfg.color+';color:'+cfg.color+'">'+(i+1)+'</span>'
-    +'<div class="odbody"><div class="odname">'+esc(p.name)+(p.kind?' <span style="color:var(--t3);font-size:9.5px">'+esc(p.kind)+'</span>':'')+'</div>'
+  renderODMap(stEn);
+  list.innerHTML=st.map(p=>{
+    const cfg=OD_KINDS[p.k];
+    const en=!ODOFF.has(odKey(p));
+    return '<div class="odrow'+(en?'':' off')+'"><span class="odn" style="background:'+cfg.nodeFill+';border-color:'+cfg.color+';color:'+cfg.color+'">'+p.idx+'</span>'
+    +'<div class="odbody"><div class="odname">'+esc(p.name)+' <span style="color:'+cfg.color+';font-size:9.5px">'+cfg.jp+(p.kind?'・'+esc(p.kind):'')+'</span></div>'
     +'<div class="odsub">'+esc(p.addr||"")+(p.hours?' ── '+esc(p.hours):'')+'</div></div>'
-    +'<div class="oddist"><b>'+f1(p.distKm)+'</b>km<span>'+deg16(p.bearing)+'</span></div></div>').join("");
+    +'<div class="oddist"><b>'+f1(p.distKm)+'</b>km<span>'+deg16(p.bearing)+'</span></div>'
+    +'<button class="odsw'+(en?' on':'')+'" type="button" data-key="'+esc(odKey(p))+'" title="'+(en?'来場者画面に表示中（クリックで無効化）':'無効（クリックで有効化）')+'" aria-label="来場者画面への表示切替" aria-pressed="'+(en?'true':'false')+'"></button></div>';
+  }).join("");
+  list.querySelectorAll(".odsw").forEach(b=>b.addEventListener("click",()=>odSpotToggle(b.dataset.key)));
   if(meta){
-    const d=data.dataset||{};
-    const src=data.curated
-      ? '会場周辺データ（東京都オープンデータの指定緊急避難場所に基づく）'
-      : (data.live?'東京都オープンデータからAPIでライブ取得':'<span style="color:var(--warn)">オフライン: 内蔵の実データを表示中</span>');
-    meta.innerHTML='出典: '+esc(d.publisher||"東京都")+'「'+esc(d.title||cfg.title)+'」（'+esc(d.license||"CC BY 4.0")+'）── '+src
-      +' ／ 会場（お台場海浜公園）'+(data.radiusKm||6)+'km圏 近い順'+(data.count||st.length)+cfg.unit
-      +' ／ 会場から最寄り①への道順を線で表示';
+    const parts=[];
+    if(ODSHOW.water&&OD.water&&OD.water.ok)
+      parts.push('給水: 東京都水道局「Tokyowater Drinking Station 一覧」(CC BY 4.0'+(OD.water.live?'・ライブ取得':'・内蔵データ')+')');
+    if(ODSHOW.evac&&OD.evac&&OD.evac.ok)
+      parts.push('避難: 指定緊急避難場所（会場周辺・東京都オープンデータ準拠・CC BY 4.0）');
+    meta.innerHTML='出典: '+parts.join(' ／ ')
+      +' ── 会場（お台場海浜公園）から近い順・最寄りへの道順を線で表示 ／ '
+      +'行末のスイッチで有効/無効を切替 ── <b>有効（ON）のスポットのみ来場者画面に表示</b>'
+      +(ODOFF.size?'（現在 '+ODOFF.size+'件を無効化中）':'');
   }
+}
+
+/* ---------- 来場者向け ── 付近の給水・避難マップ ---------- */
+function renderVisitorMap(){
+  const slot=$("#vMapSlot"); if(!slot) return;
+  if(!odAll().length){
+    slot.innerHTML='<div class="note mono" style="font-size:10px">周辺スポットを取得中…</div>';
+    return;
+  }
+  const st=odEnabledAll();
+  if(!st.length){
+    slot.innerHTML='<div class="note mono" style="font-size:10px">主催画面で有効化（ON）されたスポットがここに表示されます。</div>';
+    return;
+  }
+  gmapsKey().then(key=>{
+    const slot2=$("#vMapSlot"); if(!slot2) return;
+    if(!key){ vMapFallback(slot2,st); return; }
+    loadGmaps(key).then(()=>{
+      if(!(window.google&&google.maps)){ vMapFallback(slot2,st); return; }
+      if(!GM.vEl){
+        GM.vEl=document.createElement("div");
+        GM.vEl.style.cssText="width:100%;height:230px;border-radius:12px;overflow:hidden;border:1px solid var(--line)";
+      }
+      const moved=GM.vEl.parentNode!==slot2;
+      if(moved){ slot2.innerHTML=""; slot2.appendChild(GM.vEl); }
+      if(!GM.vmap){
+        GM.vmap=new google.maps.Map(GM.vEl,{center:{lat:LAT,lng:LON},zoom:14,disableDefaultUI:true,
+          gestureHandling:"greedy",backgroundColor:"#0B1222",styles:GMAP_STYLE});
+        GM.vInfo=new google.maps.InfoWindow();
+        new google.maps.Marker({map:GM.vmap,position:{lat:LAT,lng:LON},zIndex:999,
+          icon:{path:google.maps.SymbolPath.CIRCLE,scale:7,fillColor:"#38BDF8",fillOpacity:1,strokeColor:"#06101E",strokeWeight:2},
+          label:{text:"会",color:"#06101E",fontSize:"9px",fontWeight:"700"},title:"お台場海浜公園（会場）"});
+      }else if(moved){ google.maps.event.trigger(GM.vmap,"resize"); GM.vmap.setCenter({lat:LAT,lng:LON}); }
+      const sig=st.map(p=>odKey(p)).join("|");
+      if(GM.vSig===sig) return;
+      GM.vSig=sig;
+      (GM.vMarkers||[]).forEach(m=>m.setMap(null)); GM.vMarkers=[];
+      const bounds=new google.maps.LatLngBounds(); bounds.extend({lat:LAT,lng:LON});
+      st.forEach(p=>{
+        if(!Number.isFinite(p.lat)||!Number.isFinite(p.lon)) return;
+        const mk=new google.maps.Marker({map:GM.vmap,position:{lat:p.lat,lng:p.lon},title:p.name,
+          icon:{path:google.maps.SymbolPath.CIRCLE,scale:7,fillColor:OD_KINDS[p.k].markerColor,fillOpacity:.92,strokeColor:"#06101E",strokeWeight:1.2}});
+        mk.addListener("click",()=>{
+          GM.vInfo.setContent('<div class="gmap-iw"><b>'+esc(p.name)+'</b><span>'+esc(p.addr||"")+'</span><br><span>'+OD_KINDS[p.k].jp+' ── '+f1(p.distKm)+'km・'+deg16(p.bearing)+'方向</span></div>');
+          GM.vInfo.open(GM.vmap,mk);
+        });
+        GM.vMarkers.push(mk); bounds.extend({lat:p.lat,lng:p.lon});
+      });
+      GM.vmap.fitBounds(bounds,28);
+    }).catch(()=>vMapFallback(slot2,st));
+  });
+}
+function vMapFallback(slot,st){
+  const R=110, rmax=4;
+  let s='<circle cx="0" cy="0" r="3.4" fill="var(--sky)"/><text x="0" y="13" text-anchor="middle" style="font:600 8px var(--mono);fill:var(--sky2)">会場</text>';
+  [1,2,4].forEach(km=>{
+    const rr2=km/rmax*(R-14);
+    s+='<circle cx="0" cy="0" r="'+rr2+'" fill="none" stroke="var(--line)" stroke-dasharray="3 4"/>'
+     +'<text x="3" y="'+(-rr2-2)+'" style="font:7.5px var(--mono);fill:var(--t3)">'+km+'km</text>';
+  });
+  st.slice(0,10).forEach(p=>{
+    const rr2=Math.min(p.distKm,rmax)/rmax*(R-14);
+    const a=(p.bearing-90)*Math.PI/180;
+    s+='<circle cx="'+(rr2*Math.cos(a)).toFixed(1)+'" cy="'+(rr2*Math.sin(a)).toFixed(1)+'" r="4.2" fill="'+OD_KINDS[p.k].nodeFill+'" stroke="'+OD_KINDS[p.k].color+'"/>';
+  });
+  slot.innerHTML='<svg viewBox="-'+R+' -'+R+' '+(R*2)+' '+(R*2)+'" style="width:100%;display:block;background:var(--ink0);border:1px solid var(--line);border-radius:12px" aria-label="付近の給水・避難スポット簡易マップ"></svg>';
+  slot.querySelector("svg").innerHTML=s;
 }
 
 /* ---------- ③スタッフ最適配置マップ ---------- */
@@ -2182,7 +2339,7 @@ function renderStaffMap(){
     bars.querySelectorAll(".sb").forEach(b=>b.addEventListener("click",()=>setHour(parseInt(b.dataset.h,10))));
   }
   const noteEl=$("#staffNote");
-  if(noteEl) noteEl.innerHTML="配置は<b>密度区分（Fruin）× WBGT × ゲート流量</b>からの算出値。ゲートは流量600人/時あたり1レーン、救護はWBGT区分×場内人数、誘導は基本2名＋混雑ゾーン数。<b>最終配置は運営責任者の確認を前提</b>とする（「計画書をエクスポート」に配置表を転記）。";
+  if(noteEl) noteEl.innerHTML="配置は<b>密度区分（Fruin）× WBGT × ゲート流量</b>からの算出値。ゲートは流量600人/時あたり1レーン、救護はWBGT区分×場内人数、誘導は基本2名＋混雑ゾーン数。";
 }
 </script>
 </body>
