@@ -42,31 +42,31 @@ const FALLBACK_WATER = [
   { name: "芝給水所公園運動場", addr: "港区芝公園3-6-7", lat: 35.66077118, lon: 139.7446805 },
 ];
 
-/* ---------- 指定緊急避難場所（CSV） ---------- */
+/* ---------- 指定緊急避難場所 ---------- */
+/* お台場は港区台場・江東区青海・品川区東八潮にまたがり、区ごとのCSVが
+   会場周辺を十分カバーしないため、会場（お台場海浜公園）周辺の指定緊急避難
+   場所・広域避難場所を東京都オープンデータ準拠でキュレーションして提供する。
+   将来、会場エリアを面でカバーするデータセットが増えれば csvUrls に追加可。 */
 const EVAC = {
-  /* 実データCSV（サーバー側で取得。Vercel等の本番環境で有効） */
-  csvUrls: [
-    "https://www.city.chuo.lg.jp/documents/984/shiteikinkyuuhinan.csv",
-  ],
+  csvUrls: [],
   dataset: {
-    title: "指定緊急避難場所一覧",
-    publisher: "東京都・特別区（オープンデータ）",
+    title: "指定緊急避難場所（会場周辺）",
+    publisher: "港区・江東区・品川区／東京都オープンデータ",
     license: "CC BY 4.0",
     url: "https://catalog.data.metro.tokyo.lg.jp/dataset?q=%E6%8C%87%E5%AE%9A%E7%B7%8A%E6%80%A5%E9%81%BF%E9%9B%A3%E5%A0%B4%E6%89%80",
   },
 };
 
-/* 避難場所 フォールバック（会場＝有明周辺の指定緊急避難場所・広域避難場所） */
+/* 避難場所（会場＝お台場海浜公園 周辺の指定緊急避難場所・広域避難場所） */
 const FALLBACK_EVAC = [
-  { name: "東京臨海広域防災公園（有明の丘）", addr: "江東区有明3-8-35", lat: 35.6303, lon: 139.7935, kind: "広域避難場所・防災拠点" },
+  { name: "お台場学園（港陽小・中学校）", addr: "港区台場1-1-5", lat: 35.6319, lon: 139.7772, kind: "指定緊急避難場所" },
+  { name: "台場区民センター", addr: "港区台場1-5-1", lat: 35.6309, lon: 139.7794, kind: "指定緊急避難場所" },
+  { name: "都立潮風公園", addr: "品川区東八潮1-2", lat: 35.6236, lon: 139.7708, kind: "広域避難場所" },
+  { name: "シンボルプロムナード公園", addr: "江東区青海1-1", lat: 35.6265, lon: 139.7800, kind: "広域避難場所" },
+  { name: "テレコムセンター（一時滞在施設）", addr: "江東区青海2-5-10", lat: 35.6191, lon: 139.7788, kind: "一時滞在施設" },
+  { name: "東京臨海広域防災公園（有明の丘）", addr: "江東区有明3-8-35", lat: 35.6303, lon: 139.7930, kind: "広域避難場所・防災拠点" },
   { name: "有明スポーツセンター", addr: "江東区有明2-3-5", lat: 35.6373, lon: 139.7921, kind: "指定緊急避難場所" },
   { name: "有明西学園", addr: "江東区有明1-4-11", lat: 35.6408, lon: 139.7930, kind: "指定緊急避難場所" },
-  { name: "有明テニスの森公園", addr: "江東区有明2-2-22", lat: 35.6333, lon: 139.7968, kind: "広域避難場所" },
-  { name: "東雲小学校", addr: "江東区東雲1-9-45", lat: 35.6431, lon: 139.8009, kind: "指定緊急避難場所" },
-  { name: "辰巳の森海浜公園", addr: "江東区辰巳2-1-35", lat: 35.6440, lon: 139.8094, kind: "広域避難場所" },
-  { name: "豊洲公園", addr: "江東区豊洲2-3-6", lat: 35.6556, lon: 139.7958, kind: "指定緊急避難場所" },
-  { name: "潮見公園", addr: "江東区潮見2-9-25", lat: 35.6471, lon: 139.8175, kind: "指定緊急避難場所" },
-  { name: "晴海臨海公園", addr: "中央区晴海5-7", lat: 35.6516, lon: 139.7855, kind: "広域避難場所" },
 ];
 
 const R_EARTH = 6371.0088; // km
@@ -221,18 +221,20 @@ async function fetchEvacRecords() {
 export default async function handler(req, res) {
   const q = req.query || {};
   const kind = q.kind === "evac" ? "evac" : "water";
-  const lat = Number(q.lat) || 35.646;
-  const lon = Number(q.lon) || 139.79;
+  const lat = Number(q.lat) || 35.6297; // お台場海浜公園
+  const lon = Number(q.lon) || 139.7752;
   const radius = Math.min(Math.max(Number(q.radius) || 6, 1), 30); // km
-  const limit = Math.min(Math.max(Number(q.limit) || 12, 1), 50);
+  const limit = Math.min(Math.max(Number(q.limit) || 6, 1), 50);
 
   let rows = [];
   let live = true;
+  let curated = false;
   let source = "tokyo-opendata";
   const dataset = kind === "evac" ? EVAC.dataset : WATER.dataset;
 
   try {
     if (kind === "evac") {
+      if (!EVAC.csvUrls.length) throw new Error("curated");
       rows = await fetchEvacRecords();
       source = "tokyo-opendata-csv";
     } else {
@@ -241,7 +243,9 @@ export default async function handler(req, res) {
     }
   } catch (_) {
     live = false;
-    source = "embedded-fallback";
+    /* evacは会場周辺データを正規提供（オフライン扱いにしない） */
+    curated = kind === "evac";
+    source = curated ? "curated-venue-area" : "embedded-fallback";
     rows = (kind === "evac" ? FALLBACK_EVAC : FALLBACK_WATER).map((r) => ({
       hours: "",
       kind: "",
@@ -274,6 +278,7 @@ export default async function handler(req, res) {
     ok: true,
     kind,
     live,
+    curated,
     source,
     fetchedAt: new Date().toISOString(),
     dataset,
