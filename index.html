@@ -332,6 +332,11 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 @media(max-width:860px){.odgrid{grid-template-columns:1fr}}
 .odmapwrap{background:var(--ink0);border:1px solid var(--line);border-radius:var(--rs);padding:8px}
 #odMap{width:100%;height:auto;display:block}
+#odGmap{display:none;width:100%;height:360px;border-radius:8px;overflow:hidden}
+#odGmap .gm-style-iw,#odGmap .gm-style-iw-c{background:var(--ink2)!important}
+.gmap-iw{font-family:var(--body);font-size:12px;color:#0b1220;min-width:150px}
+.gmap-iw b{display:block;font-size:12.5px;margin-bottom:2px}
+.gmap-iw span{color:#41506e;font-size:11px}
 .odlist{display:grid;gap:8px}
 .odrow{display:flex;gap:10px;align-items:center;background:var(--ink2);border:1px solid var(--line);border-radius:var(--rs);padding:8px 12px}
 .odrow .odn{flex:none;width:20px;height:20px;border-radius:99px;background:rgba(52,211,153,.14);border:1px solid var(--ok);color:var(--ok);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center}
@@ -359,84 +364,6 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 .sb span{font-family:var(--mono);font-size:8.5px;color:var(--t3)}
 .sb.on span{color:var(--sky2)}
 </style>
-<style>
-/* ============================================================
-   v5.3 ── 現場向けビューを「タブレット筐体」で見せる
-   ============================================================ */
-.tab-stage{display:flex;flex-direction:column;align-items:center;gap:10px}
-.tab-device{
-  position:relative;width:100%;max-width:1180px;
-  background:linear-gradient(157deg,#1E2A49 0%,#0C1220 46%,#16203A 100%);
-  border:1px solid #35497A;border-radius:32px;
-  padding:24px 20px 17px;
-  box-shadow:0 34px 90px rgba(0,0,0,.62),0 2px 0 rgba(255,255,255,.03),
-             inset 0 1px 0 rgba(255,255,255,.075),inset 0 -1px 0 rgba(0,0,0,.45);
-}
-/* 側面ボタン（音量・電源） */
-.tab-device::before,.tab-device::after{
-  content:"";position:absolute;right:-3px;width:3px;border-radius:0 3px 3px 0;
-  background:linear-gradient(180deg,#2B3A61,#131B2E);
-}
-.tab-device::before{top:78px;height:44px}
-.tab-device::after{top:136px;height:78px}
-/* インカメラ */
-.tab-cam{position:absolute;top:9px;left:50%;transform:translateX(-50%);
-  width:7px;height:7px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#3C4E7A,#080D18 70%);
-  box-shadow:0 0 0 1px rgba(56,189,248,.16)}
-.tab-screen{
-  position:relative;display:flex;flex-direction:column;
-  height:clamp(540px,74vh,880px);
-  background:var(--ink1);border:1px solid #101A2E;border-radius:18px;overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(56,189,248,.05),0 0 34px rgba(0,0,0,.5)
-}
-.tab-status{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:8px 16px;border-bottom:1px solid var(--line);
-  background:rgba(6,10,20,.82);backdrop-filter:blur(8px);
-  font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3)}
-.tab-status .tsl{display:flex;align-items:center;gap:9px;min-width:0}
-.tab-status .tsl b{color:var(--t1);font-size:11.5px;letter-spacing:.06em}
-.tab-status .tsl span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tab-status .tsr{display:flex;align-items:center;gap:9px;flex:none}
-.tab-status .tsr .wifi{color:var(--sky)}
-.tab-status .batt{display:inline-flex;align-items:center;gap:3px}
-.tab-status .batt i{width:17px;height:8.5px;border:1px solid var(--t3);border-radius:2px;position:relative;display:inline-block}
-.tab-status .batt i::before{content:"";position:absolute;inset:1.5px;width:70%;background:var(--ok);border-radius:1px}
-.tab-status .batt i::after{content:"";position:absolute;right:-3px;top:2px;width:1.5px;height:4px;background:var(--t3);border-radius:0 1px 1px 0}
-.tab-body{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:16px 18px 34px;
-  scrollbar-width:thin;scrollbar-color:#2E4270 transparent}
-.tab-body::-webkit-scrollbar{width:9px}
-.tab-body::-webkit-scrollbar-thumb{background:#243257;border-radius:99px;border:3px solid transparent;background-clip:content-box}
-.tab-body::-webkit-scrollbar-thumb:hover{background:#38507F;background-clip:content-box}
-/* 下端のスクロールヒント */
-.tab-fade{position:absolute;left:0;right:0;bottom:0;height:44px;pointer-events:none;
-  background:linear-gradient(180deg,rgba(10,15,30,0),rgba(10,15,30,.92));
-  opacity:1;transition:opacity .25s}
-.tab-screen.at-end .tab-fade{opacity:0}
-.tab-home{margin:11px auto 0;width:128px;height:4px;border-radius:99px;background:#28375C}
-.tab-cap{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9.5px;
-  letter-spacing:.16em;color:var(--t3)}
-.tab-cap i{width:5px;height:5px;border-radius:50%;background:var(--sky);
-  box-shadow:0 0 0 3px rgba(56,189,248,.14);display:inline-block}
-/* 給水/避難タブの折り返しを止める */
-#odSeg{max-width:250px}
-#odSeg button{white-space:nowrap;padding:7px 9px}
-/* 筐体ぶんだけ内側が狭くなるので、ビュー内のブレークポイントを前倒しする */
-@media(max-width:1080px){ #view-live .g-live{grid-template-columns:1fr} }
-@media(max-width:1060px){ #view-live .g-staff{grid-template-columns:1fr} }
-@media(max-width:1080px){
-  .tab-device{padding:20px 12px 13px;border-radius:26px}
-  .tab-body{padding:14px 13px 32px}
-}
-/* 端末モックが邪魔になる幅ではフラットに戻す */
-@media(max-width:720px){
-  .tab-device{background:none;border:0;border-radius:0;padding:0;box-shadow:none}
-  .tab-device::before,.tab-device::after,.tab-cam,.tab-home,.tab-status,.tab-fade{display:none}
-  .tab-screen{height:auto;background:none;border:0;border-radius:0;overflow:visible;box-shadow:none}
-  .tab-body{overflow:visible;padding:0}
-  .tab-cap{display:none}
-}
-</style>
 </head>
 <body>
 
@@ -460,7 +387,7 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
       </button>
       <button class="abtn gen" id="btnGen" title="現在の予報値から文書を生成">
         <span id="btnGenIcon"></span>
-        <span class="lt"><span>指示を出力</span><span class="sub" id="genSub">運用計画書</span></span>
+        <span class="lt"><span>概要を把握</span><span class="sub" id="genSub">Summary</span></span>
       </button>
       <button class="abtn export" id="btnExport" title="スタッフ配置表つきの運用計画書をPDFとして保存（印刷ダイアログ）">
         <span id="btnExportIcon"></span>
@@ -522,7 +449,7 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
         <div class="ctl"><div class="row"><label><span data-ic="ticket"></span>チケット販売数</label><output id="tktOut"></output></div><input type="range" id="tktRange" min="3000" max="30000" step="500"></div>
         <label class="switch" style="margin:14px 0 4px"><input type="checkbox" id="guideChk" checked><span class="tr"></span><span>容量考慮の日陰誘導（Fruin 2.0人/m²上限）</span></label>
         <div class="note" style="margin-top:12px" id="guideNote"></div>
-        <div class="note" style="margin-top:12px">実況を反映→過去の気象（Open-Meteo）・東京都オープンデータをAPI連携済み。予報値から計画書・現場指示・来場者通知をAI生成。今後は許可取得後、過去の人流データや実会場のセンシングデータも取り込み、配置提案や事前シミュレーションまでAI活用を拡張します。</div>
+        <div class="note" style="margin-top:12px">実況・過去の気象（Open-Meteo）と東京都オープンデータ（都営給水スポット）をAPI連携済み。予報値から計画書・現場指示・来場者通知をAI生成。今後は許可取得後、過去の人流データや実会場のセンシングデータも取り込み、配置提案や事前シミュレーションまでAI活用を拡張します。</div>
       </div>
     </div>
 
@@ -557,16 +484,16 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
     <div class="panel" style="margin-top:16px" id="odPanel">
       <div class="hf-head">
         <div>
-          <div class="eyebrow"><span data-ic="database"></span>TOKYO OPEN DATA ── もしもの時の避難・給水運営計画まで自動生成</div>
+          <div class="eyebrow"><span data-ic="database"></span>TOKYO OPEN DATA ── 会場周辺インフラ</div>
           <div class="ptitle" style="margin-bottom:0" id="odTitle">会場周辺の給水スポット<small id="odTitleSub">東京都水道局「Tokyowater Drinking Station 一覧」をAPIでライブ取得</small></div>
         </div>
         <div class="hf-tools">
-          <div class="seg" id="odSeg"></div>
+          <div class="seg" id="odSeg" style="max-width:230px"></div>
           <button class="playbtn" id="odReload"><span data-ic="refresh"></span><span>再取得</span></button>
         </div>
       </div>
       <div class="odgrid" style="margin-top:12px">
-        <div class="odmapwrap"><svg id="odMap" aria-label="会場を中心とした周辺スポットの方位・距離マップ"></svg></div>
+        <div class="odmapwrap"><svg id="odMap" aria-label="会場を中心とした周辺スポットの方位・距離マップ"></svg><div id="odGmap" aria-label="会場周辺スポットのGoogleマップ"></div></div>
         <div class="odlist" id="odList"><div class="note">ページ表示時に自動取得します。</div></div>
       </div>
       <div class="note mono" id="odMeta" style="margin-top:12px">出典: 東京都オープンデータ ── 会場周辺の実データをAPIで取得</div>
@@ -575,19 +502,6 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 
   <!-- ================= 現場向け ================= -->
   <section class="view" id="view-live">
-   <div class="tab-stage">
-    <div class="tab-device">
-      <div class="tab-cam" aria-hidden="true"></div>
-      <div class="tab-screen" id="tabScreen">
-        <div class="tab-status" aria-hidden="true">
-          <span class="tsl"><b id="tabClock">--:--</b><span>ONSITE OPS ／ TOKYO SUMMER FES 2026</span></span>
-          <span class="tsr">
-            <span class="wifi">WI-FI</span>
-            <span id="tabDate">--</span>
-            <span class="batt">82%<i></i></span>
-          </span>
-        </div>
-        <div class="tab-body" id="tabBody">
     <div class="kpis" id="liveKpis"></div>
     <div class="grid g-live">
       <div class="panel">
@@ -623,13 +537,6 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
       <div class="ptitle">この先の予報<small>現在時刻マーカー付き</small></div>
       <div class="tl-wrap"><svg id="tlchartLive"></svg></div>
     </div>
-        </div>
-        <div class="tab-fade" aria-hidden="true"></div>
-      </div>
-      <div class="tab-home" aria-hidden="true"></div>
-    </div>
-    <div class="tab-cap"><i></i>ONSITE TABLET VIEW ── 現場端末（10.9インチ想定）</div>
-   </div>
   </section>
 
   <!-- ================= 来場者向け ================= -->
@@ -1380,10 +1287,6 @@ function renderLive(){
     +kpi("thermometer","WBGT",f1(p.maxW),"",HEAT_LABEL[hr]+"・日陰率 "+Math.round(p.shadeAvg*100)+"%",["ok","warn","heat","danger"][hr])
     +kpi("bell","総合ステータス",["平常","注意","警戒","危険"][Math.max(lvl,hr)],"",hhmm(S.hour)+" 時点の実況",["ok","warn","heat","danger"][Math.max(lvl,hr)]);
 
-  const tc=$("#tabClock"); if(tc) tc.textContent=hhmm(S.hour);
-  const td=$("#tabDate");
-  if(td){ const dm=/^(\d{4})-(\d{2})-(\d{2})$/.exec(S.date||""); td.textContent = dm ? (dm[2]*1)+"/"+(dm[3]*1) : "--"; }
-
   $("#liveBoardSub").textContent=hhmm(S.hour)+" 時点（時刻はタイムラインで移動）";
   const rows=p.zones.slice().sort((a,b)=>b.d-a.d).map(z=>{
     const st=Math.max(z.dl, z.hr>=2?z.hr:0);
@@ -1665,7 +1568,7 @@ function ruleDoc(kind,c){
 }
 const DOCAUD={
   plan:"イベント制作会社の運営計画担当者",
-  live:"当日現場のスタッフ（警備・誘導・救護）",
+  live:"当日現場のスタッフ（誘導・救護・ゲート）",
   visitor:"一般の来場者（子ども連れ・高齢者を含む）"
 };
 let lastDocKind="plan";
@@ -1716,8 +1619,8 @@ async function generateDoc(kind){
    ============================================================ */
 const LENSES=[
   {id:"plan",jp:"主催（PC）",en:"HOST · PC",ic:"pen",doc:"運用計画書"},
-  {id:"live",jp:"現場向け（タブレット）",en:"ONSITE · TABLET",ic:"hard-hat",doc:"現場指示"},
-  {id:"visitor",jp:"現場向け（モバイル）",en:"ONSITE · MOBILE",ic:"smartphone",doc:"アナウンス文"}
+  {id:"visitor",jp:"来場者向け（モバイル）",en:"VISITOR · MOBILE",ic:"smartphone",doc:"アナウンス文"},
+  {id:"live",jp:"現場向け（タブレット）",en:"ONSITE · TABLET",ic:"hard-hat",doc:"現場指示"}
 ];
 function setView(v){
   if(PLAY.on) stopPlay();
@@ -1726,8 +1629,7 @@ function setView(v){
   $("#btnGen").style.display = "flex";
   document.querySelectorAll(".view").forEach(el=>el.classList.toggle("on",el.id==="view-"+v));
   document.querySelectorAll("#lens button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
-  $("#genSub").textContent=LENSES.find(l=>l.id===v).doc;
-  if(v==="live"){ const tb=$("#tabBody"); if(tb) tb.scrollTop=0; }
+  $("#genSub").textContent="Summary";
   try{history.replaceState(null,"","?view="+v);}catch(e){}
   update();
 }
@@ -1819,19 +1721,6 @@ function init(){
     if(["1","2","3"].includes(e.key)&&!/input|textarea/i.test(document.activeElement.tagName)) setView(LENSES[+e.key-1].id);
   });
   window.addEventListener("resize",()=>{ if(S.view==="plan"){drawMap();drawSunTrack();} if(S.view==="live"){drawTimeline("#tlchartLive",{now:true});renderStaffMap();} });
-  /* タブレット筐体: 下端フェード（これ以上スクロールできない時は消す） */
-  (function(){
-    const body=$("#tabBody"), screen=$("#tabScreen");
-    if(!body||!screen) return;
-    const sync=()=>{
-      const room=body.scrollHeight-body.clientHeight;
-      screen.classList.toggle("at-end", room<=8 || body.scrollTop>=room-8);
-    };
-    body.addEventListener("scroll",sync,{passive:true});
-    window.addEventListener("resize",sync);
-    if(window.ResizeObserver) new ResizeObserver(sync).observe(body);
-    sync();
-  })();
   /* deep link */
   const q=new URLSearchParams(location.search).get("view");
   const v=LENSES.some(l=>l.id===q)?q:"plan";
@@ -1922,10 +1811,10 @@ async function fetchPast(dateStr){
 
 /* ---------- ②東京都オープンデータ ── 給水スポット / 避難場所 ---------- */
 const OD_KINDS={
-  water:{jp:"給水スポット", ic:"droplet", color:"var(--ok)", nodeFill:"rgba(52,211,153,.22)",
+  water:{jp:"給水スポット", ic:"droplet", color:"var(--ok)", nodeFill:"rgba(52,211,153,.22)", markerColor:"#34D399",
          title:"会場周辺の給水スポット", sub:"東京都水道局「Tokyowater Drinking Station 一覧」をAPIでライブ取得",
          unit:"カ所"},
-  evac: {jp:"避難場所", ic:"shield", color:"var(--heat)", nodeFill:"rgba(251,146,60,.20)",
+  evac: {jp:"避難場所", ic:"shield", color:"var(--heat)", nodeFill:"rgba(251,146,60,.20)", markerColor:"#FB923C",
          title:"会場周辺の避難場所（災害時）", sub:"東京都オープンデータ「指定緊急避難場所」をAPIで取得（会場からの避難方向つき）",
          unit:"カ所"}
 };
@@ -1988,6 +1877,80 @@ function deg16(b){
   const names=["北","北北東","北東","東北東","東","東南東","南東","南南東","南","南南西","南西","西南西","西","西北西","北西","北北西"];
   return names[Math.round((((b%360)+360)%360)/22.5)%16];
 }
+
+/* ---------- Google Maps プロット（キー設定時のみ・未設定はSVGレーダー） ---------- */
+const GM={key:undefined,loading:null,map:null,markers:[],venueMarker:null,info:null};
+const GMAP_STYLE=[
+  {elementType:"geometry",stylers:[{color:"#0e1626"}]},
+  {elementType:"labels.text.stroke",stylers:[{color:"#0a0f1e"}]},
+  {elementType:"labels.text.fill",stylers:[{color:"#8fa0c8"}]},
+  {featureType:"poi",stylers:[{visibility:"off"}]},
+  {featureType:"transit",elementType:"labels.icon",stylers:[{visibility:"off"}]},
+  {featureType:"road",elementType:"geometry",stylers:[{color:"#1b2946"}]},
+  {featureType:"road",elementType:"labels.text.fill",stylers:[{color:"#61719a"}]},
+  {featureType:"water",elementType:"geometry",stylers:[{color:"#08111f"}]},
+  {featureType:"administrative",elementType:"geometry",stylers:[{color:"#22304f"}]}
+];
+async function gmapsKey(){
+  if(GM.key!==undefined) return GM.key;
+  try{ const r=await fetch("/api/config",{signal:AbortSignal.timeout(8000)}); const j=await r.json(); GM.key=(j&&j.mapsKey)||""; }
+  catch(e){ GM.key=""; }
+  return GM.key;
+}
+function loadGmaps(key){
+  if(window.google&&window.google.maps) return Promise.resolve();
+  if(GM.loading) return GM.loading;
+  GM.loading=new Promise((res,rej)=>{
+    const s=document.createElement("script");
+    s.src="https://maps.googleapis.com/maps/api/js?key="+encodeURIComponent(key)+"&v=quarterly&language=ja&region=JP";
+    s.async=true; s.onload=()=>res(); s.onerror=()=>rej(new Error("maps load failed"));
+    document.head.appendChild(s);
+  });
+  return GM.loading;
+}
+function showODMap(useGmap){
+  const svg=$("#odMap"), g=$("#odGmap");
+  if(svg) svg.style.display=useGmap?"none":"block";
+  if(g) g.style.display=useGmap?"block":"none";
+}
+async function renderODMap(kind,st,cfg){
+  const g=$("#odGmap"); if(!g){ return; }
+  const key=await gmapsKey();
+  if(!key){ showODMap(false); return; }
+  try{
+    await loadGmaps(key);
+    if(!(window.google&&google.maps)){ showODMap(false); return; }
+    if(!GM.map){
+      GM.map=new google.maps.Map(g,{center:{lat:LAT,lng:LON},zoom:14,mapTypeControl:false,
+        streetViewControl:false,fullscreenControl:false,clickableIcons:false,backgroundColor:"#0B1222",styles:GMAP_STYLE});
+      GM.info=new google.maps.InfoWindow();
+      GM.venueMarker=new google.maps.Marker({map:GM.map,position:{lat:LAT,lng:LON},zIndex:999,
+        icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:"#38BDF8",fillOpacity:1,strokeColor:"#06101E",strokeWeight:2},
+        label:{text:"会",color:"#06101E",fontSize:"10px",fontWeight:"700"},title:"臨海イベント広場（架空会場）"});
+    }
+    showODMap(true);
+    google.maps.event.trigger(GM.map,"resize");
+    GM.markers.forEach(m=>m.setMap(null)); GM.markers=[];
+    const bounds=new google.maps.LatLngBounds();
+    bounds.extend({lat:LAT,lng:LON});
+    st.forEach((p,i)=>{
+      if(!Number.isFinite(p.lat)||!Number.isFinite(p.lon)) return;
+      const pos={lat:p.lat,lng:p.lon};
+      const mk=new google.maps.Marker({map:GM.map,position:pos,title:p.name,
+        icon:{path:google.maps.SymbolPath.CIRCLE,scale:9,fillColor:cfg.markerColor,fillOpacity:.92,strokeColor:"#06101E",strokeWeight:1.5},
+        label:{text:String(i+1),color:"#06101E",fontSize:"10px",fontWeight:"700"}});
+      mk.addListener("click",()=>{
+        GM.info.setContent('<div class="gmap-iw"><b>'+esc(p.name)+'</b>'
+          +(p.kind?'<span>'+esc(p.kind)+'</span><br>':'')
+          +'<span>'+esc(p.addr||"")+'</span><br><span>会場から '+f1(p.distKm)+'km・'+deg16(p.bearing)+'方向</span></div>');
+        GM.info.open(GM.map,mk);
+      });
+      GM.markers.push(mk); bounds.extend(pos);
+    });
+    if(GM.markers.length) GM.map.fitBounds(bounds,48);
+  }catch(e){ showODMap(false); }
+}
+
 function renderODWidget(){
   const list=$("#odList"), map=$("#odMap"), meta=$("#odMeta");
   const data=OD[ODKIND], cfg=OD_KINDS[ODKIND];
@@ -1995,7 +1958,7 @@ function renderODWidget(){
   ODLAST=data;
   if(!data.ok||!(data.stations||[]).length){
     list.innerHTML='<div class="note">'+cfg.jp+'を取得できませんでした。「再取得」をお試しください（デプロイ環境では自動で動作します）。</div>';
-    map.innerHTML=""; return;
+    map.innerHTML=""; showODMap(false); return;
   }
   const st=data.stations;
   const R=150, rings=[2,4,6], rmax=6;
@@ -2018,6 +1981,7 @@ function renderODWidget(){
   });
   map.setAttribute("viewBox","-"+R+" -"+R+" "+(R*2)+" "+(R*2));
   map.innerHTML=s;
+  renderODMap(ODKIND,st,cfg);
   list.innerHTML=st.map((p,i)=>
     '<div class="odrow"><span class="odn" style="background:'+cfg.nodeFill+';border-color:'+cfg.color+';color:'+cfg.color+'">'+(i+1)+'</span>'
     +'<div class="odbody"><div class="odname">'+esc(p.name)+(p.kind?' <span style="color:var(--t3);font-size:9.5px">'+esc(p.kind)+'</span>':'')+'</div>'
@@ -2034,7 +1998,6 @@ function renderODWidget(){
 
 /* ---------- ③スタッフ最適配置マップ ---------- */
 const STF_ROLE={
-  sec:  {label:"警備",  color:"#F87171"},
   guide:{label:"誘導",  color:"#7DD3FC"},
   gate: {label:"ゲート",color:"#38BDF8"},
   medic:{label:"救護",  color:"#34D399"}
@@ -2103,15 +2066,6 @@ function renderStaffMap(){
     ctx.strokeStyle=color; ctx.lineWidth=1; rr(ctx,bx,by,w,12,6); ctx.stroke();
     ctx.fillStyle=color; ctx.fillText(txt,bx+5,by+9.5);
   };
-  /* 警備 ── ゾーン滞留人数に比例（SEC_RATIO） */
-  let secTot=0;
-  for(const z of st.zones){
-    if(!z.sec) continue;
-    secTot+=z.sec;
-    const z0=ZONES.find(q=>q.id===z.id);
-    dotsInRect(z0,Math.min(z.sec,14),7).forEach(pt=>drawDot(pt[0],pt[1],STF_ROLE.sec.color));
-    badge(z0,"警備×"+z.sec,STF_ROLE.sec.color);
-  }
   /* 誘導 ── 基本2名は中央プロムナード、混雑ゾーン(dl>=2)へ各1名 */
   const hotZones=st.zones.filter(z=>z.dl>=2);
   const prom=ZONES.find(z=>z.id==="prom");
@@ -2149,28 +2103,27 @@ function renderStaffMap(){
   const sm=$("#staffSummary");
   if(sm){
     sm.innerHTML=
-      '<div class="stf-kv"><span>'+st.hh+':00台の必要人員（算出値）</span><b>'+(st.row.ops+secTot)+'名</b></div>'
-      +'<div class="stf-row"><i style="background:'+STF_ROLE.sec.color+'"></i>警備 ── ゾーン滞留比例 <b>'+secTot+'</b></div>'
+      '<div class="stf-kv"><span>'+st.hh+':00台の必要人員（算出値）</span><b>'+st.row.ops+'名</b></div>'
       +'<div class="stf-row"><i style="background:'+STF_ROLE.gate.color+'"></i>ゲート ── 流量 '+fmt(st.row.flowPH)+'人/時 <b>'+st.row.gate+'</b></div>'
       +'<div class="stf-row"><i style="background:'+STF_ROLE.guide.color+'"></i>誘導 ── 混雑ゾーン '+hotZones.length+' <b>'+st.row.guide+'</b></div>'
       +'<div class="stf-row"><i style="background:'+STF_ROLE.medic.color+'"></i>救護 ── WBGT '+f1(st.p.maxW)+' <b>'+st.row.medic+'</b></div>'
-      +'<div class="stf-kv" style="margin-top:10px"><span>本日の運営ピーク</span><b>'+STAFF.peakOps.h+':00 ── '+STAFF.peakOps.ops+'名＋警備</b></div>';
+      +'<div class="stf-kv" style="margin-top:10px"><span>本日の運営ピーク</span><b>'+STAFF.peakOps.h+':00 ── '+STAFF.peakOps.ops+'名</b></div>';
   }
   const bars=$("#staffBars");
   if(bars){
-    const maxT=Math.max(...STAFF.hourly.map(x=>x.total));
+    const maxT=Math.max(...STAFF.hourly.map(x=>x.ops),1);
     bars.innerHTML='<div class="sb-title">時間帯別 必要人員 ── クリックで時刻移動</div>'
      +'<div class="sb-row">'+STAFF.hourly.map(x=>{
         const hpx=90;
         const seg=(v,c)=>'<i style="height:'+Math.round(v/maxT*hpx)+'px;background:'+c+'"></i>';
-        return '<div class="sb'+(x.h===st.hh?" on":"")+'" data-h="'+x.h+'" title="'+x.h+':00 計'+x.total+'名">'
-          +'<div class="sb-col">'+seg(x.sec,STF_ROLE.sec.color)+seg(x.guide,STF_ROLE.guide.color)+seg(x.medic,STF_ROLE.medic.color)+seg(x.gate,STF_ROLE.gate.color)+'</div>'
+        return '<div class="sb'+(x.h===st.hh?" on":"")+'" data-h="'+x.h+'" title="'+x.h+':00 計'+x.ops+'名">'
+          +'<div class="sb-col">'+seg(x.guide,STF_ROLE.guide.color)+seg(x.medic,STF_ROLE.medic.color)+seg(x.gate,STF_ROLE.gate.color)+'</div>'
           +'<span>'+x.h+'</span></div>';
       }).join("")+'</div>';
     bars.querySelectorAll(".sb").forEach(b=>b.addEventListener("click",()=>setHour(parseInt(b.dataset.h,10))));
   }
   const noteEl=$("#staffNote");
-  if(noteEl) noteEl.innerHTML="配置は<b>密度区分（Fruin）× WBGT × ゲート流量</b>からの算出値。警備はゾーン滞留人数に比例（"+SEC_RATIO.join("/")+"人あたり1名）、ゲートは流量600人/時あたり1レーン、救護はWBGT区分×場内人数、誘導は基本2名＋混雑ゾーン数。<b>最終配置は有資格の警備計画者の確認を前提</b>とする（「計画書をエクスポート」に配置表を転記）。";
+  if(noteEl) noteEl.innerHTML="配置は<b>密度区分（Fruin）× WBGT × ゲート流量</b>からの算出値。ゲートは流量600人/時あたり1レーン、救護はWBGT区分×場内人数、誘導は基本2名＋混雑ゾーン数。<b>最終配置は運営責任者の確認を前提</b>とする（「計画書をエクスポート」に配置表を転記）。";
 }
 </script>
 </body>
