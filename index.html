@@ -23,6 +23,7 @@
   --body:'Noto Sans JP','Hiragino Kaku Gothic ProN',ui-sans-serif,system-ui,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
   --r:14px; --rs:10px;
+  --sheen-a:.045;            /* デバイス画面の光沢。0にすると無効 */
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--ink1);color:var(--t1);font-family:var(--body);-webkit-font-smoothing:antialiased}
@@ -95,6 +96,9 @@ main{padding:22px 0 60px}
 .view.on{display:block}
 @keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 .grid{display:grid;gap:16px}
+.grid>*,.odgrid>*,.g-staff>*{min-width:0}
+.board-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scrollhint{display:none;font-family:var(--mono);font-size:9.5px;color:var(--t3);margin-top:7px}
 .g-map{grid-template-columns:7fr 5fr}
 .g-2{grid-template-columns:1fr 1fr}
 .g-live{grid-template-columns:7fr 5fr}
@@ -193,8 +197,11 @@ table.board tr td:first-child{font-weight:600;white-space:nowrap}
 
 /* phone (visitor) */
 .phone-stage{display:flex;justify-content:center;gap:26px;align-items:flex-start;flex-wrap:wrap}
-.phone{width:375px;max-width:100%;background:#0B1120;border:1px solid var(--line2);border-radius:34px;padding:12px;box-shadow:0 24px 70px rgba(0,0,0,.5),0 0 0 6px rgba(20,31,56,.6)}
-.pscreen{background:linear-gradient(180deg,#0D1526,#0A0F1E);border-radius:24px;overflow:hidden;border:1px solid var(--line)}
+.phone{width:375px;max-width:100%;background:linear-gradient(160deg,#1a2338,#0c1220);border:1px solid var(--line2);border-radius:34px;padding:12px;box-shadow:0 24px 70px rgba(0,0,0,.5),0 0 0 6px rgba(20,31,56,.6)}
+.pscreen{position:relative;background:linear-gradient(180deg,#080D19,#05080F);border-radius:24px;overflow:hidden;border:1px solid #0e1830;
+  box-shadow:inset 0 1px 0 rgba(125,211,252,.10), inset 0 0 22px rgba(0,0,0,.55)}
+.pscreen::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:5;
+  background:linear-gradient(133deg,rgba(255,255,255,var(--sheen-a)) 0%,rgba(255,255,255,calc(var(--sheen-a)*.28)) 20%,transparent 44%)}
 .pstatus{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--t3);padding:9px 16px 0}
 .phead{padding:10px 16px 12px;border-bottom:1px solid var(--line)}
 .phead .ev{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--t2)}
@@ -235,7 +242,10 @@ table.board tr td:first-child{font-weight:600;white-space:nowrap}
 .tb-live{display:inline-flex;align-items:center;gap:6px;color:var(--sky2)}
 .tb-live i{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:pulse 1.6s infinite}
 .tb-r{letter-spacing:.12em;color:var(--t2)}
-.tablet-screen{background:var(--ink1);border:1px solid var(--line);border-radius:18px;padding:16px;overflow:hidden}
+.tablet-screen{position:relative;background:linear-gradient(180deg,#080D19,#05080F);border:1px solid #0e1830;border-radius:18px;padding:16px;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(125,211,252,.09), inset 0 0 34px rgba(0,0,0,.5), 0 0 34px rgba(56,189,248,.045)}
+.tablet-screen::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:5;
+  background:linear-gradient(118deg,rgba(255,255,255,var(--sheen-a)) 0%,rgba(255,255,255,calc(var(--sheen-a)*.24)) 24%,transparent 50%)}
 @media(max-width:820px){.tablet{border-radius:22px;padding:10px}.tablet-screen{padding:11px;border-radius:14px}.tablet::after{display:none}}
 
 /* modal */
@@ -378,46 +388,6 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 .odrow.off{opacity:.42}
 .odrow.off .odname{text-decoration:line-through;text-decoration-color:var(--t3);text-decoration-thickness:1px}
 
-/* ---- モバイル調整（600px以下） ---- */
-@media(max-width:600px){
-  .wrap{padding:0 12px}
-  .panel{padding:13px 12px}
-  .panel.tight{padding:11px 12px}
-  #cmdbar .wrap{gap:8px}
-  .brand .tag{display:none}
-  .brand .name{font-size:15px}
-  .lens button{padding:7px 5px;font-size:10.5px;gap:4px}
-  .lens .en{display:none}
-  .abtn{padding:8px 9px;font-size:11.5px;gap:6px}
-  .abtn .sub{display:none}
-  .kpis,.kpis.k3{grid-template-columns:1fr 1fr;gap:8px}
-  .kpi{padding:11px 12px}
-  .kpi .val{font-size:20px}
-  .ptitle{font-size:14px}
-  .ptitle small{display:block;margin-left:0;margin-top:3px;line-height:1.5}
-  .hf-head{align-items:flex-start}
-  .hf-tools{width:100%;justify-content:flex-start;flex-wrap:wrap;gap:8px}
-  .daterow input[type=date]{min-width:120px}
-  .pastrow{gap:6px}
-  .pastbtn{font-size:11px;padding:8px 10px}
-  .pastchip{font-size:9px;padding:6px 8px}
-  #odGmap{height:280px}
-  .odrow{padding:7px 9px;gap:8px}
-  .odrow .odname{white-space:normal}
-  .oddist{min-width:52px}
-  .suninfo{margin-left:0;width:100%}
-  .maptools{gap:6px}
-  .tablet{padding:8px;border-radius:18px}
-  .tablet-screen{padding:9px;border-radius:12px}
-  .tablet-bar{font-size:9.5px;padding:2px 4px 8px}
-  .tablet-bar .tb-l b{font-size:11px}
-  .g-staff{gap:12px}
-  .phone{width:100%;border-radius:26px}
-  footer.site .sp{font-size:9px;letter-spacing:.04em}
-  #docmodal{border-radius:12px}
-  #docbody{padding:14px 14px;font-size:11.5px}
-  .legend{gap:9px;font-size:9.5px}
-}
 .odlist{display:grid;gap:8px}
 .odrow{display:flex;gap:10px;align-items:center;background:var(--ink2);border:1px solid var(--line);border-radius:var(--rs);padding:8px 12px}
 .odrow .odn{flex:none;width:20px;height:20px;border-radius:99px;background:rgba(52,211,153,.14);border:1px solid var(--ok);color:var(--ok);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center}
@@ -444,6 +414,64 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 .sb-col i{display:block;border-radius:1.5px;min-height:0}
 .sb span{font-family:var(--mono);font-size:8.5px;color:var(--t3)}
 .sb.on span{color:var(--sky2)}
+/* ---- モバイル調整（600px以下） ---- */
+@media(max-width:600px){
+  .wrap{padding:0 12px}
+  .panel{padding:13px 12px}
+  .panel.tight{padding:11px 12px}
+  #cmdbar .wrap{gap:8px}
+  .brand .tag{display:none}
+  .brand .name{font-size:15px}
+  .lens button{padding:7px 5px;font-size:10.5px;gap:4px}
+  .lens .en{display:none}
+  .abtn{padding:8px 9px;font-size:11.5px;gap:6px}
+  .abtn .sub{display:none}
+  .kpis,.kpis.k3{grid-template-columns:1fr 1fr;gap:8px}
+  .kpi{padding:11px 12px}
+  .kpi .val{font-size:20px}
+  .ptitle{font-size:14px}
+  .ptitle small{display:block;margin-left:0;margin-top:3px;line-height:1.5}
+  .hf-head{align-items:flex-start}
+  .hf-tools{width:100%;justify-content:flex-start;flex-wrap:wrap;gap:8px}
+  .daterow input[type=date]{min-width:120px}
+  .pastrow{gap:6px}
+  .pastbtn{font-size:11px;padding:8px 10px}
+  .pastchip{font-size:9px;padding:6px 8px}
+  /* ゾーン状況ボード: 横スライドで閲覧（この先の予報と同じ挙動） */
+  .board-wrap table.board{min-width:620px}
+  .scrollhint{display:block}
+  table.board td{padding:7px 6px}
+  table.board th{font-size:9px;padding:0 6px 7px}
+  .act-cell{font-size:10px}
+  /* 会場周辺スポット: 地図とリストのサイズをモバイル向けに縮小 */
+  .odmapwrap{padding:6px}
+  #odMap{max-width:290px;margin:0 auto}
+  #odGmap{height:215px}
+  .odtoggles{width:100%}
+  .odtg{flex:1;justify-content:center;font-size:11px;padding:6px 8px}
+  .odrow{padding:7px 8px;gap:7px}
+  .odrow .odn{width:18px;height:18px;font-size:9px}
+  .odrow .odname{font-size:11px;white-space:normal;line-height:1.45}
+  .odrow .odsub{font-size:9px}
+  .odrow .oddist{font-size:8.5px;min-width:44px}
+  .odrow .oddist b{font-size:11px}
+  .odsw{width:30px;height:17px}
+  .odsw::after{top:2px;width:12.5px;height:12.5px}
+  .odsw.on::after{transform:translateX(13px)}
+  #odMeta{font-size:9.5px;line-height:1.65}
+  .suninfo{margin-left:0;width:100%}
+  .maptools{gap:6px}
+  .tablet{padding:8px;border-radius:18px}
+  .tablet-screen{padding:9px;border-radius:12px}
+  .tablet-bar{font-size:9.5px;padding:2px 4px 8px}
+  .tablet-bar .tb-l b{font-size:11px}
+  .g-staff{gap:12px}
+  .phone{width:100%;border-radius:26px}
+  footer.site .sp{font-size:9px;letter-spacing:.04em}
+  #docmodal{border-radius:12px}
+  #docbody{padding:14px 14px;font-size:11.5px}
+  .legend{gap:9px;font-size:9.5px}
+}
 </style>
 </head>
 <body>
@@ -591,7 +619,8 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
       <div class="panel">
         <div class="eyebrow"><span data-ic="radio"></span>ZONE STATUS BOARD</div>
         <div class="ptitle">ゾーン状況ボード<small id="liveBoardSub"></small></div>
-        <div style="overflow-x:auto"><table class="board" id="zoneBoard"></table></div>
+        <div class="board-wrap"><table class="board" id="zoneBoard"></table></div>
+        <div class="scrollhint">→ 横にスクロールできます</div>
       </div>
       <div class="panel">
         <div class="eyebrow"><span data-ic="alert-triangle"></span>ALERT FEED</div>
@@ -647,9 +676,11 @@ button:focus-visible,.switch input:focus-visible+.tr,input:focus-visible{outline
 
         <div class="aim">
           <div class="aim-h"><span data-ic="megaphone"></span>裏の目的 ── 人流のコントロール</div>
-          <p>予報の提示は、そのまま<b style="color:var(--t1)">誘導の手段</b>になる。「いま○○ブースが空いています」「××は30分後が狙い目」——通知の出し方ひとつで、来場者の足を<b style="color:var(--t1)">送りたい場所へ動かし、混雑を先回りで散らす</b>。</p>
+          <p>予報の提示は、そのまま<b style="color:var(--t1)">誘導の手段</b>になる。通知の出し方ひとつで、来場者の足を<b style="color:var(--t1)">送りたい場所へ動かし、混雑を先回りで散らす</b>。</p>
+          <p><b style="color:var(--t1)">ホストページのスポットで、ONのスポットのみを対象にすることで、手動で混雑分散化も可能。</b>主催が有効化したスポットだけが来場者に配信されるため、状況に応じて誘導先を絞り込める。</p>
           <p>つまりこのサービスは<b style="color:var(--sky2)">分析で終わらない。予報→通知→行動変容までを一気通貫で回す「誘導レイヤー」</b>。危険側だけでなく、集客したいブースへの送客にも同じ仕組みが効く。</p>
           <div class="aim-tags">
+            <span class="badge b-ok">安全対策：状況を見て混雑しない場所に誘導</span>
             <span class="badge b-heat">混雑緩和：危険ピークを事前に平準化</span>
             <span class="badge b-sky">送客：狙ったブースへ人を呼び込む</span>
           </div>
@@ -1363,6 +1394,39 @@ const ZACT={
   egate:["駅からの到着波に合わせ誘導員+2","入場列を2列→4列へ"],
   prom:["対面通行の分離帯を設置","立ち止まり禁止の巡回放送"]
 };
+/* 現場アラート（ボードと文書生成で共用） */
+function liveAlerts(){
+  const evs=[];
+  const pts=SERIES.points;
+  for(let i=1;i<pts.length;i++){
+    const t=pts[i].h, rel=t-S.hour;
+    if(rel<-0.5||rel>3) continue;
+    const tag=rel<=0?"実況":"予測";
+    for(const z of pts[i].zones){
+      const prev=pts[i-1].zones.find(q=>q.id===z.id);
+      if(prev.dl<3&&z.dl>=3) evs.push({t,sev:"danger",ic:"alert-triangle",m:"<b>"+esc(z.n)+"</b> 危険密度 "+f1(z.d)+"人/m² 到達見込み ── "+esc((ZACT[z.id]||["巡回強化"])[1]||"入場規制検討"),tag});
+      else if(prev.dl<2&&z.dl===2) evs.push({t,sev:"warn",ic:"users",m:"<b>"+esc(z.n)+"</b> 混雑帯へ（"+f1(z.d)+"人/m²）",tag});
+      if(prev.hr<3&&z.hr>=3) evs.push({t,sev:"heat",ic:"thermometer",m:"<b>"+esc(z.n)+"</b> WBGT危険域 "+f1(z.wbgt)+" ── ミスト・給水・放送",tag});
+      else if(prev.hr<2&&z.hr===2) evs.push({t,sev:"heat",ic:"sun",m:"<b>"+esc(z.n)+"</b> WBGT厳重警戒 "+f1(z.wbgt),tag});
+    }
+    const inflow=pts[i].present-pts[i-1].present;
+    if(inflow>S.tickets*0.075) evs.push({t,sev:"info",ic:"trending-up",m:"流入ピーク：30分で+"+fmt(inflow)+"人 ── ゲート増員・列の日陰確保",tag});
+  }
+  if(S.wx==="rainy") evs.push({t:S.hour,sev:"info",ic:"cloud-rain",m:"降雨：屋根下滞留に注意（フードコート・物販の密度監視）",tag:"実況"});
+  evs.sort((a,b)=>a.t-b.t);
+  return evs;
+}
+const stripTags=s=>String(s).replace(/<[^>]*>/g,"");
+const SEVJP={danger:"危険",heat:"暑熱",warn:"注意",info:"情報"};
+/* アラートボードに出ている内容を1行に要約（文書の1行目に使用） */
+function alertHeadline(){
+  const evs=liveAlerts();
+  if(!evs.length) return "【アラート "+hhmm(S.hour)+" 時点】しきい値超過なし ── 直近3時間は平常。通常巡回を継続。";
+  const rank={danger:0,heat:1,warn:2,info:3};
+  const top=evs.slice().sort((a,b)=>(rank[a.sev]-rank[b.sev])||(a.t-b.t))[0];
+  return "【アラート "+hhmm(S.hour)+" 時点】"+hhmm(top.t)+"["+top.tag+"] "+SEVJP[top.sev]+"：" + stripTags(top.m)
+    + (evs.length>1?" ／ ほか"+(evs.length-1)+"件":"");
+}
 function renderLive(){
   const p=snap();
   const lvl=Math.max(...p.zones.map(z=>z.dl));
@@ -1395,25 +1459,7 @@ function renderLive(){
   $("#zoneBoard").innerHTML='<thead><tr><th></th><th>ゾーン</th><th>密度</th><th>WBGT</th><th>日陰</th><th>状態</th><th>推奨アクション</th></tr></thead><tbody>'+rows+'</tbody>';
 
   /* alerts */
-  const evs=[];
-  const pts=SERIES.points;
-  const nowI=Math.round((clamp(S.hour,OPEN,CLOSE)-OPEN)*2);
-  for(let i=1;i<pts.length;i++){
-    const t=pts[i].h, rel=t-S.hour;
-    if(rel<-0.5||rel>3) continue;
-    const tag=rel<=0?"実況":"予測";
-    for(const z of pts[i].zones){
-      const prev=pts[i-1].zones.find(q=>q.id===z.id);
-      if(prev.dl<3&&z.dl>=3) evs.push({t,sev:"danger",ic:"alert-triangle",m:"<b>"+esc(z.n)+"</b> 危険密度 "+f1(z.d)+"人/m² 到達見込み ── "+esc((ZACT[z.id]||["巡回強化"])[1]||"入場規制検討"),tag});
-      else if(prev.dl<2&&z.dl===2) evs.push({t,sev:"warn",ic:"users",m:"<b>"+esc(z.n)+"</b> 混雑帯へ（"+f1(z.d)+"人/m²）",tag});
-      if(prev.hr<3&&z.hr>=3) evs.push({t,sev:"heat",ic:"thermometer",m:"<b>"+esc(z.n)+"</b> WBGT危険域 "+f1(z.wbgt)+" ── ミスト・給水・放送",tag});
-      else if(prev.hr<2&&z.hr===2) evs.push({t,sev:"heat",ic:"sun",m:"<b>"+esc(z.n)+"</b> WBGT厳重警戒 "+f1(z.wbgt),tag});
-    }
-    const inflow=pts[i].present-pts[i-1].present;
-    if(inflow>S.tickets*0.075) evs.push({t,sev:"info",ic:"trending-up",m:"流入ピーク：30分で+"+fmt(inflow)+"人 ── ゲート増員・列の日陰確保",tag});
-  }
-  if(S.wx==="rainy") evs.push({t:S.hour,sev:"info",ic:"cloud-rain",m:"降雨：屋根下滞留に注意（フードコート・物販の密度監視）",tag:"実況"});
-  evs.sort((a,b)=>a.t-b.t);
+  const evs=liveAlerts();
   $("#alertFeed").innerHTML=evs.length?evs.map(e=>
     '<div class="alert sev-'+e.sev+'"><span style="color:'+({danger:"var(--danger)",heat:"var(--heat)",warn:"var(--warn)",info:"var(--sky)"}[e.sev])+'">'+ic(e.ic,15)+'</span>'
     +'<div><div class="t">'+hhmm(e.t)+' ['+e.tag+']</div><div class="msg">'+e.m+'</div></div></div>').join("")
@@ -1597,6 +1643,7 @@ function docContext(){
     guidance:S.guide?"容量考慮の日陰誘導ON(上限2.0人/m²)":"誘導なし",
     gateInflowPeak:inflow.time,
     staff:{peakHour:STAFF.peakOps.h+":00",opsTotal:STAFF.peakOps.ops,gate:STAFF.peakOps.gate,medic:STAFF.peakOps.medic,guide:STAFF.peakOps.guide,shiftEarly:STAFF.shiftEarly,shiftLate:STAFF.shiftLate,inflowPerHour:STAFF.inflowPH},
+    currentAlerts:liveAlerts().map(e=>({time:hhmm(e.t),tag:e.tag,level:SEVJP[e.sev],text:stripTags(e.m)})),
     zones:hi.map(z=>zmap(z,p.sun.alt<=2)),
     zonesAtDensityPeak:sr.peakD.zones.slice().sort((a,b)=>b.d-a.d).map(z=>zmap(z,sr.peakD.sun.alt<=2))
   };
@@ -1688,7 +1735,8 @@ async function generateDoc(kind){
           +"・数値はJSONにある値だけを単位付きで使い、創作しない\n"
           +"・Markdown記号(#,*,-)は使わずプレーンテキストのみ。全体で500〜700字\n"
           +(kind==="visitor"?"・やさしい言葉で、不安を煽らず、具体的な行動を促す\n":"")
-          +(kind==="live"?"・無線でそのまま読み上げられる命令形の短文にする。優先度の高い順に並べる\n":"")
+          +(kind==="live"?"・無線でそのまま読み上げられる命令形の短文にする。優先度の高い順に並べる\n"
+            +"・JSONのcurrentAlertsが現在発報中のアラート。これへの対応を最優先で書く（冒頭のアラート要約行は自動で付くので本文では繰り返さない）\n":"")
           +"\nJSON:\n"+JSON.stringify(c)}]})
     });
     if(r.ok){
@@ -1699,6 +1747,7 @@ async function generateDoc(kind){
     }
   }catch(e){ /* fall through */ }
   if(!text) text=ruleDoc(kind,c);
+  if(kind==="live") text=alertHeadline()+"\n\n"+text;   /* 1行目に現在のアラート */
   body.classList.remove("busy");
   body.textContent=text;
   $("#docSrc").innerHTML=viaAI
@@ -1721,7 +1770,7 @@ function setView(v){
   $("#btnGen").style.display = "flex";
   document.querySelectorAll(".view").forEach(el=>el.classList.toggle("on",el.id==="view-"+v));
   document.querySelectorAll("#lens button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
-  $("#genMain").textContent = (v==="live") ? "現場指示を出す" : "概要を把握";
+  $("#genMain").textContent = (v==="live") ? "現場指示" : "概要を把握";
   $("#genSub").textContent  = (v==="live") ? "ONSITE" : "Summary";
   try{history.replaceState(null,"","?view="+v);}catch(e){}
   update();
